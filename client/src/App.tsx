@@ -1,29 +1,38 @@
 import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AuthContextProvider } from './auth'
+import { GlobalStoreContextProvider } from './store'
 import logo from './logo.svg';
 import './App.css';
 
 import { ThemeProvider } from "@mui/material";
 import { appTheme } from './ThemeOptions';
 
+import {
+	AppBanner,
+	LoginScreen,
+	SplashScreen,
+	RegisterScreen,
+} from './components';
+
 function App() {
 	return (
 		<ThemeProvider theme={appTheme}>
 			<div className="App">
-				<header className="App-header">
-					<img src={logo} className="App-logo" alt="logo" />
-					<p>
-						Edit <code>src/App.tsx</code> and save to reload.
-					</p>
-					<a
-						className="App-link"
-						href="https://reactjs.org"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Learn React
-					</a>
-				</header>
+				<img src={logo} className="App-logo" alt="logo" />
 			</div>
+			<BrowserRouter>
+				<AuthContextProvider>
+					<GlobalStoreContextProvider>
+						<AppBanner />
+						<Routes>
+							<Route path="/" element ={<SplashScreen/>} />
+							<Route path="/login/" element={<LoginScreen/>} />
+							<Route path="/register/" element={<RegisterScreen/>} />
+						</Routes>
+					</GlobalStoreContextProvider>
+				</AuthContextProvider>
+			</BrowserRouter>
 		</ThemeProvider>
 	);
 }
