@@ -2,6 +2,7 @@ import { Box, Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import reactLogo from '../resources/logo.svg';
 import logo from '../resources/PlaylisterLogo.png'
+import { useNavigate } from 'react-router-dom';
 
 let welcomeButtonSx = {
 	fontSize: 20,
@@ -10,6 +11,7 @@ let welcomeButtonSx = {
 };
 
 export default function WelcomeScreen() {
+	const navigate = useNavigate();
 	return (
 		<Grid
 			container spacing={3}
@@ -37,42 +39,40 @@ export default function WelcomeScreen() {
 				direction='row'
 				justifyContent='space-evenly'
 				alignItems='center'
-				sx={{
-					width: 800
-				}}
+				sx={{ width: '800px' }}
 				xs>
 				<Button
 					variant='contained'
-					className='modal-button'
 					sx={welcomeButtonSx}
+					onClick={() => navigate('/register/')}
 				>
 					Create Account
 				</Button>
 				<Button
 					variant='contained'
-					className='modal-button'
 					sx={welcomeButtonSx}
+					onClick={() => navigate('/login/')}
 				>
 					Login
 				</Button>
 				<Button
 					variant='contained'
-					className='modal-button'
 					sx={welcomeButtonSx}
+					onClick={() => navigate('/home/')}
 				>
 					Continue as Guest
 				</Button>
 			</Grid>
-				{/*<Box
+				<Box
 					className='App-logo' 
 					component='img'
-					height='25%'
-					width='25%'
+					height='15%'
+					width='15%'
 					alt='Playlister'
 					src={reactLogo}
-	/>*/}
+				/>
 			<Grid item xs>
-			By: Jacky Xie
+				By: Jacky Xie
 			</Grid>
 		</Grid>
 	)
