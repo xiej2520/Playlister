@@ -1,6 +1,6 @@
 import { Box, AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { AuthContext, AuthAPICreator } from '../auth';
 import store from '../store';
 import SearchBar from './SearchBar';
@@ -11,13 +11,16 @@ import Person from '@mui/icons-material/Person';
 import Sort from '@mui/icons-material/Sort';
 
 export default function AppBanner() {
-	const [accountMenu, setAccountMenu] = useState(<AccountCircle/>);
 	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
 	const AuthAPI = AuthAPICreator(authDispatch);
 	useEffect(() => {
 		getAccountMenu().then((menu) => setAccountMenu(menu));
 	}, [])
 
+	const location = useLocation();
+	const isOnHome = location.pathname.split('/').includes('home');
+
+	const [accountMenu, setAccountMenu] = useState(<AccountCircle/>);
 	const [profileAnchorEl, setProfileAnchorEl] = useState<HTMLElement | null>(null);
 	const isProfileMenuOpen = Boolean(profileAnchorEl);
 	const [sortAnchorEl, setSortAnchorEl] = useState<HTMLElement | null>(null);
@@ -58,8 +61,8 @@ export default function AppBanner() {
 			open={isProfileMenuOpen}
 			onClose={handleProfileMenuClose}
 		>
-			<MenuItem onClick={handleProfileMenuClose} component={Link} to='/login/'>Login</MenuItem>
-			<MenuItem onClick={handleProfileMenuClose} component={Link} to='/register/'>Create New Account</MenuItem>
+			<MenuItem onClick={handleProfileMenuClose} component={Link} to='/login'>Login</MenuItem>
+			<MenuItem onClick={handleProfileMenuClose} component={Link} to='/register'>Create New Account</MenuItem>
 		</Menu>
 	);
 	const loggedInMenu = (
@@ -105,43 +108,47 @@ export default function AppBanner() {
 						<Link style={{ textDecoration: 'none', color: 'white' }} to='/'
 							onClick={() => {}/*store.clearTPS*/}>⌂</Link>
 					</Typography>
-						<IconButton
-							size="large"
-							edge="end"
-							aria-label="account of current user"
-							aria-controls={menuId}
-							aria-haspopup="true"
-							color="inherit"
-						>
-							<Person/>
-						</IconButton>
-						<IconButton
-							size="large"
-							edge="end"
-							aria-label="account of current user"
-							aria-controls={menuId}
-							aria-haspopup="true"
-							color="inherit"
-						>
-							<Group/>
-						</IconButton>
-						
-						<Box sx={{ flexGrow: 1}}/>
+						{isOnHome ? <>
+							<IconButton
+								size="large"
+								edge="end"
+								aria-label="account of current user"
+								aria-controls={menuId}
+								aria-haspopup="true"
+								color="inherit"
+							>
+								<Person/>
+							</IconButton>
+							<IconButton
+								size="large"
+								edge="end"
+								aria-label="account of current user"
+								aria-controls={menuId}
+								aria-haspopup="true"
+								color="inherit"
+							>
+								<Group/>
+							</IconButton>
+							
+							<Box sx={{ flexGrow: 1}}/>
 
-					<SearchBar></SearchBar>
+							<SearchBar/>
 
-						<Box sx={{ flexGrow: 1}}/>
-					<Button
-						size="large"
-						aria-label="sort by menu button"
-						aria-controls={isSortMenuOpen ? 'sort-menu' : undefined}
-						aria-haspopup="true"
-						onClick={handleSortMenuOpen}
-						color="inherit"
-					>
-						Sort By&nbsp;
-						<Sort/>
-					</Button>
+							<Box sx={{ flexGrow: 1}}/>
+							<Button
+								size="large"
+								aria-label="sort by menu button"
+								aria-controls={isSortMenuOpen ? 'sort-menu' : undefined}
+								aria-haspopup="true"
+								onClick={handleSortMenuOpen}
+								color="inherit"
+							>
+								Sort By&nbsp;
+								<Sort/>
+							</Button>
+						</>
+						: <Box sx={{ flexGrow: 1}}/>
+					}
 
 					<Menu
 						anchorEl={sortAnchorEl}

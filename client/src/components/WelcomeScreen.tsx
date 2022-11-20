@@ -44,21 +44,21 @@ export default function WelcomeScreen() {
 				<Button
 					variant='contained'
 					sx={welcomeButtonSx}
-					onClick={() => navigate('/register/')}
+					onClick={() => navigate('/register')}
 				>
 					Create Account
 				</Button>
 				<Button
 					variant='contained'
 					sx={welcomeButtonSx}
-					onClick={() => navigate('/login/')}
+					onClick={() => navigate('/login')}
 				>
 					Login
 				</Button>
 				<Button
 					variant='contained'
 					sx={welcomeButtonSx}
-					onClick={() => navigate('/home/')}
+					onClick={() => navigate('/home')}
 				>
 					Continue as Guest
 				</Button>

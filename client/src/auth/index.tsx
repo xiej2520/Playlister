@@ -33,13 +33,10 @@ export const enum AuthActionType {
 type AuthAction =
 	| { type: AuthActionType.GET_LOGGED_IN, payload: { user: User, loggedIn: boolean} }
 	| {
-		type: AuthActionType.LOGIN_USER, payload: {
-			firstName: string, lastName: string, email: string,
-			password: string, passwordVerify: string
-		}
-	}
+		type: AuthActionType.LOGIN_USER, payload: { user: User } }
 	| { type: AuthActionType.LOGOUT_USER, payload: {} }
-	| { type: AuthActionType.REGISTER_USER, payload: {} }
+	| { type: AuthActionType.REGISTER_USER, payload: { user: User }
+	}
 	| { type: AuthActionType.DISMISS_ERROR, payload: {} }
 
 const authDefaultDispatch: Dispatch<AuthAction> = () => defaultAuth;
@@ -57,12 +54,26 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 					errorMsg: null
 				}
 			}
+			case AuthActionType.LOGIN_USER: {
+				return {
+					...auth,
+					user: payload.user,
+					loggedIn: true
+				}
+			}
 			case AuthActionType.LOGOUT_USER: {
 				return {
 					...auth,
 					user: null,
 					loggedIn: false,
 					errorMsg: null
+				}
+			}
+			case AuthActionType.REGISTER_USER: {
+				return {
+					...auth,
+					user: payload.user,
+					loggedIn: true
 				}
 			}
 			default: return state;
@@ -89,17 +100,30 @@ export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
 			}
 		}
 		catch (err) {
-			console.log("Error encountered in getLoggedIn.");
+			console.log('Error encountered in getLoggedIn.');
 			return false;
 		}
 	},
 	getUserInitials: function (auth: AuthState) {
-		let initials = "";
+		let initials = '';
 		if (auth.user !== null) {
 			initials += auth.user.firstName.charAt(0);
 			initials += auth.user.lastName.charAt(0);
 		}
 		return initials;
+	},
+	loginUser: async (email: string, password: string) => {
+		try {
+			const response = await api.loginUser(email, password);
+			if (response.status === 200) {
+				authDispatch({ type: AuthActionType.LOGIN_USER, payload: { user: response.data.user}});
+				const navigate = useNavigate();
+				navigate('home');
+			}
+		}
+		catch (err) {
+			console.log("Error encountered in loginUser.");
+		}
 	},
 	logoutUser: async () => {
 		try {
@@ -110,6 +134,23 @@ export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
 		}
 		catch (err) {
 			console.log("Error encountered in logoutUser.");
+		}
+	},
+	registerUser: async (firstName: string, lastName: string, email: string,
+			password: string, passwordVerify: string) => {
+		try {
+			const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);
+			if (response.status === 200) {
+				authDispatch({
+					type: AuthActionType.REGISTER_USER,
+					payload: {
+						user: response.data.user,
+					}
+				})
+			}
+		}
+		catch (err) {
+			console.log("Error encountered in registerUser.");
 		}
 	}
 })
