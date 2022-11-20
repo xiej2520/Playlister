@@ -1,3 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap');
+
+:root {
+	--swatch-foundation: #222;
+	--swatch-foundation-2: #333;
+	--swatch-primary: #eee;
+	--swatch-accent: #8844ee;
+	--swatch-accent-2: #ee44bb;
+	--font-family: "Lexend Deca";
+	--bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
+}
+
 .App {
 	text-align: center;
 }
