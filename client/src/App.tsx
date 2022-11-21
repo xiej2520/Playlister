@@ -9,6 +9,7 @@ import { appTheme } from './ThemeOptions';
 
 import {
 	AppBanner,
+	HomeWrapper,
 	LoginScreen,
 	RegisterScreen,
 	WelcomeScreen,
@@ -21,11 +22,12 @@ function App() {
 			<BrowserRouter>
 				<AuthContextProvider>
 					<GlobalStoreContextProvider>
-						<AppBanner />
+						<AppBanner/>
 						<Routes>
-							<Route path="/" element ={<WelcomeScreen/>} />
-							<Route path="/login/" element={<LoginScreen/>} />
-							<Route path="/register/" element={<RegisterScreen/>} />
+							<Route path="/" element ={<WelcomeScreen/>}/>
+							<Route path="/login" element={<LoginScreen/>}/>
+							<Route path="/register" element={<RegisterScreen/>}/>
+							<Route path="/home" element={<HomeWrapper/>}/>
 						</Routes>
 					</GlobalStoreContextProvider>
 				</AuthContextProvider>
