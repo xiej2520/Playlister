@@ -44,7 +44,7 @@ const authDefaultDispatch: Dispatch<AuthAction> = () => defaultAuth;
 export const AuthContext = createContext({state: defaultAuth, dispatch: authDefaultDispatch});
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
-	const authReducer = (state: AuthState, { type, payload }: AuthAction): AuthState => {
+	const authReducer = (auth: AuthState, { type, payload }: AuthAction): AuthState => {
 		switch(type) {
 			case AuthActionType.GET_LOGGED_IN: {
 				return {
@@ -76,7 +76,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 					loggedIn: true
 				}
 			}
-			default: return state;
+			default: return auth;
 		}
 	}
 
@@ -115,10 +115,11 @@ export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
 	loginUser: async (email: string, password: string) => {
 		try {
 			const response = await api.loginUser(email, password);
+			console.log(response.status);
 			if (response.status === 200) {
+				console.log("dispatching")
 				authDispatch({ type: AuthActionType.LOGIN_USER, payload: { user: response.data.user}});
-				const navigate = useNavigate();
-				navigate('home');
+				console.log("dispatch complete")
 			}
 		}
 		catch (err) {

@@ -14,17 +14,20 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router';
 
 export default function LoginScreen() {
 	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
 	const AuthAPI = AuthAPICreator(authDispatch);
+	const navigate = useNavigate();
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formElements = event.currentTarget.elements;
 		let email = (formElements.namedItem('email') as HTMLInputElement).value;
 		let password = (formElements.namedItem('password') as HTMLInputElement).value;
-		AuthAPI.loginUser(email, password);
+		await AuthAPI.loginUser(email, password);
+		navigate('/home');
 	};
 	let modalJSX = null;
 	if (auth.errorMsg !== null) {
