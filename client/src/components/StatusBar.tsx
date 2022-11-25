@@ -5,7 +5,7 @@ import PlaylistCard from './PlaylistCard';
 
 function StatusBar() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
-	const StoreAPI = StoreAPICreator(storeDispatch);
+	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
 	const [openPlaylist, setOpenPlaylist] = useState<string | null>(null);
 		

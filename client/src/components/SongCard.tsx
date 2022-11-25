@@ -6,7 +6,7 @@ import { ISong } from "../store/playlist-model";
 
 function SongCard(props: { song: ISong, index: number}) {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
-	const StoreAPI = StoreAPICreator(storeDispatch);
+	const StoreAPI = StoreAPICreator(store, storeDispatch);
 	const { song, index } = props;
 	const [draggedTo, setDraggedTo] = useState(false);
 
@@ -30,6 +30,10 @@ function SongCard(props: { song: ISong, index: number}) {
 		let sourceIndex = Number(event.dataTransfer.getData('song'));
 		setDraggedTo(false);
 	}
+	function handleRemoveSong(event: React.MouseEvent<HTMLButtonElement>) {
+		console.log('showing remove song modal')
+		StoreAPI.showRemoveSongModal(index, song);
+	}
 	return (
 		<Box
 			key={index}
@@ -37,7 +41,7 @@ function SongCard(props: { song: ISong, index: number}) {
 			sx={{
 				alignItems: 'center',
 				bgcolor: draggedTo ? 'primary' : 'background.paper',
-				borderRadius: '8px',
+				borderRadius: '4px',
 				display: 'flex',
 				margin: '4px',
 				padding: '8px'
@@ -67,9 +71,7 @@ function SongCard(props: { song: ISong, index: number}) {
 				variant="contained"
 				id={"remove-song-" + index}
 				className="list-card-button"
-				/*
 				onClick={handleRemoveSong}
-				*/
 			>
 			&#x2715;
 			</Button>

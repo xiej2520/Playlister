@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { ISong } from '../../models/playlist-model';
+import { IPlaylist, ISong } from '../../models/playlist-model';
 
 // userId is added to the request by auth.verify
 
@@ -15,4 +15,11 @@ export interface IDeletePlaylistRequest extends Request {
 };
 export interface IGetPlaylistsRequest extends Request {
 	userId: string;
+}
+
+export interface IUpdatePlaylistRequest extends Request {
+	userId: string;
+	body: {
+		playlist: IPlaylist;
+	};
 }

@@ -5,14 +5,14 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IPlaylistExport } from '../store/playlist-model';
-import { Box, Grid, IconButton } from '@mui/material';
+import { Box, Button, Grid, IconButton } from '@mui/material';
 import { ThumbUp, ThumbDown } from '@mui/icons-material';
 import SongCard from './SongCard';
 import { StoreContext, StoreAPICreator, StoreActionType } from '../store';
 
 function PlaylistCard(props: { playlist: IPlaylistExport }) {
 	const { state: store, dispatch: storeDispatch } = React.useContext(StoreContext);
-	const StoreAPI = StoreAPICreator(storeDispatch);
+	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
 	const { playlist } = props;
 	const isExpanded = store.openPlaylist !== null && store.openPlaylist._id === playlist._id;
@@ -43,7 +43,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		<Grid item xs={6}
 			display='flex'
 			sx={{flexDirection: 'column', justifyContent: 'center'}}
-		>Published: </Grid>
+		>Published: {String(playlist.publishDate)}</Grid>
 		<Grid item xs={6}>
 			<IconButton
 				size="medium"
@@ -96,10 +96,25 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				{
 					playlist.songs.map((song, index) => (
 						<SongCard
+							key={index}
 							index={index}
 							song={song}
 						/>
 					))
+				}
+				{
+					playlist.publishDate === null ?
+					<Button
+						sx={{
+							fontSize: '2rem',
+							height: '3rem',
+							width: '100%'
+						}}
+						variant='contained'
+					>
+					+
+					</Button> :
+					<></>
 				}
 			</AccordionDetails>
 		</Accordion>

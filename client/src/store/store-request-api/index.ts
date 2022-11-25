@@ -15,8 +15,8 @@ export const createPlaylist = (newListName: string, newSongs: [], userEmail: str
 export const getPublishedPlaylists = () => api.get(`/publishedplaylists/`);
 export const getUserPlaylists = () => api.get(`/userplaylists/`);
 export const deletePlaylistById = (id: string) => api.delete(`/playlist/${id}`);
-export const updatePlaylistById = (id: string, playlist: IPlaylist) => {
-	return api.put(`/playlist/${id}`, {
+export const updatePlaylistById = (playlist: IPlaylist) => {
+	return api.put(`/playlist/${playlist._id}`, {
 		playlist: playlist
 	});
 };

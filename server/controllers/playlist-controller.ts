@@ -5,7 +5,7 @@ import { CallbackError } from 'mongoose';
 import { IPlaylist } from '../models/playlist-model';
 import Playlist from '../models/playlist-model';
 import { IUser, UserSchema, User } from '../models/user-model';
-import { ICreatePlaylistRequest, IDeletePlaylistRequest, IGetPlaylistsRequest } from './requests/playlist-requests';
+import { ICreatePlaylistRequest, IDeletePlaylistRequest, IGetPlaylistsRequest, IUpdatePlaylistRequest } from './requests/playlist-requests';
 import auth from '../auth';
 
 const createPlaylist = async (req: ICreatePlaylistRequest, res: express.Response) => {
@@ -80,7 +80,7 @@ const deletePlaylist = async (req: IDeletePlaylistRequest, res: express.Response
 			}
 			Playlist
 				.findByIdAndDelete(req.params.id)
-				.then(() => { return res.status(200).json({body: 'Playlist successfully deleted.'}); })
+				.then(() => { return res.status(200).json({ body: 'Playlist successfully deleted.' }); })
 				.catch((err: CallbackError) => console.log(err));
 		})
 		.catch((err: CallbackError) => console.log(err));
@@ -109,8 +109,49 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: express.Response
 		});
 }
 
+const updatePlaylist = async(req: IUpdatePlaylistRequest, res: express.Response) => {
+	if (auth.verifyUser(req) === null) {
+		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
+	}
+	if (!req.body) {
+		return res.status(400).json({
+			error: 'You must provide a body to update!'
+		});
+	}
+	Playlist
+		.findById(req.params.id)
+		.then((playlist: IPlaylist | null) => {
+			if (playlist === null) {
+				return res.status(404).json({ errorMessage: 'Playlist not found!' });
+			}
+			if (playlist.ownerId != req.userId) {
+				return res.status(401).json({ errorMessage: 'User does not have permission to edit this playlist!' });
+			}
+			if (playlist.publishDate !== null) {
+				return res.status(401).json({ errorMessage: 'Playlist cannot be edited!' });
+			}
+			let updatedPlaylist = req.body.playlist;
+			playlist.name = updatedPlaylist.name;
+			playlist.songs = updatedPlaylist.songs;
+			playlist
+				.save()
+				.then(() => {
+					return res.status(200).json({ body: 'Playlist sucessfully edited!' });
+				})
+				.catch((error: CallbackError) => {
+					console.log(error);
+					return res.status(400).json({ body: 'Playlist not edited!' });
+				});
+		})
+		.catch((error: CallbackError) => {
+			console.log(error);
+			return res.status(400).json({ body: 'Playlist not edited!' });
+		})
+}
+
 module.exports = {
 	createPlaylist,
 	deletePlaylist,
 	getUserPlaylists,
+	updatePlaylist
 };
