@@ -1,5 +1,6 @@
 import { Grid } from "@mui/material";
 import HomeScreen from "./HomeScreen";
+import StatusBar from "./StatusBar";
 import YouTubeWrapper from "./YouTubeWrapper";
 
 export default function HomeWrapper() {
@@ -16,8 +17,13 @@ export default function HomeWrapper() {
 			<Grid item xs={6} sx={{ height: "90%" }}>
 				<YouTubeWrapper/>
 			</Grid>
-			<Grid item xs={12} sx={{ height: "10vh" }}>
-			Status Bar
+			<Grid item xs={12}
+				container
+				alignItems='center'
+				justifyContent='center'
+				sx={{ height: '10vh', align: 'center'}}
+			>
+				<StatusBar/>
 			</Grid>
 		</Grid>
 	)

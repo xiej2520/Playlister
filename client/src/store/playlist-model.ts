@@ -4,11 +4,16 @@ export interface ISong {
 	youTubeId: string;
 }
 
-export interface IPlaylist {
+export interface IPlaylistExport {
+	_id: string;
 	name: string;
-	ownerEmail: string;
-	songs: ISong[]
-	_id: any
+	ownerName: string;
+	ownerId: string;
+	songs: ISong[];
+	publishDate: Date | null;
+	listens: number;
+	likeCount: number;
+	dislikeCount: number;
 };
 
-export default IPlaylist;
+export default IPlaylistExport;

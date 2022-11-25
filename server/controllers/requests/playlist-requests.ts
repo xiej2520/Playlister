@@ -14,5 +14,5 @@ export interface IDeletePlaylistRequest extends Request {
 	userId: string;
 };
 export interface IGetPlaylistsRequest extends Request {
-	uesrId: string;
+	userId: string;
 }

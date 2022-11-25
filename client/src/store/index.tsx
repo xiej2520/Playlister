@@ -1,15 +1,14 @@
 import { createContext, Dispatch, useContext, useReducer, useState } from 'react';
 import api from './store-request-api';
-import { IPlaylist } from './playlist-model';
+import { IPlaylistExport } from './playlist-model';
 
 export const enum StoreActionType {
 	LOAD_SCREEN,
 	LOAD_PLAYLISTS,
-	CLOSE_CURRENT_LIST,
+	SET_OPEN_PLAYLIST,
 	CREATE_NEW_LIST,
 	LOAD_ID_NAME_PAIRS,
 	MARK_LIST_FOR_DELETION,
-	SET_CURRENT_LIST,
 	SET_LIST_NAME_EDIT_ACTIVE,
 	EDIT_SONG,
 	REMOVE_SONG,
@@ -33,20 +32,21 @@ const enum CurrentModal {
 type StoreState = {
 	currentScreen: CurrentScreen;
 	currentModal: CurrentModal;
-	playlists: IPlaylist[];
-	currentList: null;
+	playlists: IPlaylistExport[];
+	openPlaylist: IPlaylistExport | null;
 };
 
 const defaultStore: StoreState = {
 	currentScreen: CurrentScreen.NONE,
 	currentModal: CurrentModal.NONE,
 	playlists: [],
-	currentList: null
+	openPlaylist: null
 };
 
 type StoreAction =
 	| { type: StoreActionType.LOAD_SCREEN, payload: { currentScreen: CurrentScreen }}
-	| { type: StoreActionType.LOAD_PLAYLISTS, payload: { playlists: IPlaylist[] }}
+	| { type: StoreActionType.LOAD_PLAYLISTS, payload: { playlists: IPlaylistExport[] }}
+	| { type: StoreActionType.SET_OPEN_PLAYLIST, payload: { playlist: IPlaylistExport | null }}
 
 const storeDefaultDispatch: Dispatch<StoreAction> = () => defaultStore;
 
@@ -67,6 +67,12 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 				return {
 					...store,
 					playlists: payload.playlists
+				};
+			}
+			case StoreActionType.SET_OPEN_PLAYLIST: {
+				return {
+					...store,
+					openPlaylist: payload.playlist
 				};
 			}
 			default: return store;
@@ -93,6 +99,11 @@ export const StoreAPICreator = (storeDispatch: Dispatch<StoreAction>) => ({
 		catch (err) {
 			console.log('Error encountered in getUserPlaylists.');
 		}
+	},
+	setOpenPlaylist: function(playlist: IPlaylistExport | null) {
+		storeDispatch({ type: StoreActionType.SET_OPEN_PLAYLIST, payload: {
+			playlist: playlist
+		}});
 	}
 })
 

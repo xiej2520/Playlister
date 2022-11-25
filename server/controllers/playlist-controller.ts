@@ -9,7 +9,6 @@ import { ICreatePlaylistRequest, IDeletePlaylistRequest, IGetPlaylistsRequest } 
 import auth from '../auth';
 
 const createPlaylist = async (req: ICreatePlaylistRequest, res: express.Response) => {
-	console.log("received create playlist request")
 	if (auth.verifyUser(req) === null) {
 		return res.status(401).json({ errorMessage: 'Unauthorized request.' })
 	}
@@ -35,8 +34,17 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: express.Response
 		if (user === null) {
 			return res.status(400).send("User could not be found.");
 		}
-		playlist.ownerEmail = user.email;
-		playlist.ownerName = user.firstName + " " + user.lastName;
+		const playlist = new Playlist({
+			...body,
+			ownerName: user.firstName + " " + user.lastName,
+			ownerId: user._id,
+			publishDate: null,
+			listens: 0,
+			likeCount: 0,
+			likes: new Map(),
+			dislikeCount: 0,
+			dislikes: new Map()
+		});
 		user.playlists.push(playlist._id);
 		user
 			.save()
@@ -44,57 +52,59 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: express.Response
 				playlist
 					.save()
 					.then(() => {
+						const playlistExport = {
+							_id: playlist._id,
+							name: playlist.name,
+							ownerName: playlist.ownerName,
+							songs: playlist.songs,
+							likeCount: playlist.likeCount,
+							dislikeCount: playlist.dislikeCount
+						};
 						return res.status(201).json({
-							playlist: playlist
+							playlist: playlistExport
 						})
 					})
 					.catch((err) => {
 						console.log(err);
 						return res.status(400).json({
 							errorMessage: 'Playlist not created!'
-						})
+						});
 					})
 			});
 	});
 }
 
 const deletePlaylist = async (req: IDeletePlaylistRequest, res: express.Response) => {
-	console.log("received delete playlist req")
 	if (auth.verifyUser(req) === null) {
 		return res.status(401).json({ errorMessage: 'Unauthorized request.' })
 	}
-	Playlist.findById(req.params.id, (err: CallbackError, playlist: IPlaylist) => {
-		if (err) {
-			return res.status(404).json({
-				errorMessage: 'Playlist not found!'
-			});
-		}
-		User.findOne({ email: playlist.ownerEmail }, (_err: CallbackError, user: IUser) => {
-			if (user._id === req.userId) {
-				Playlist.findByIdAndDelete(req.params.id, () => {
-					return res.status(200).json({
-						success: true
-					});
-				}).catch((err: CallbackError) => console.log(err));
+	Playlist
+		.findById(req.params.id)
+		.then((playlist: IPlaylist | null) => {
+			if (playlist === null) {
+				return res.status(404).json({ errorMessage: 'Playlist not found!'});
 			}
-			else {
-				return res.status(400).json({
-					errorMessage: 'Error: user does not have permission to delete playlist.'
-				});
+			if (playlist.ownerId != req.userId) {
+				return res.status(401).json({ errorMessage: 'User does not have permission to delete this playlist.'});
 			}
+			Playlist
+				.findByIdAndDelete(req.params.id)
+				.then(() => { return res.status(200).json({body: 'Playlist successfully deleted.'}); })
+				.catch((err: CallbackError) => console.log(err));
 		})
-	});
+		.catch((err: CallbackError) => console.log(err));
 }
 
-const getUserPlaylists = async (req: express.Request, res: express.Response) => {
-	console.log('received get user playlists request')
+const getUserPlaylists = async (req: IGetPlaylistsRequest, res: express.Response) => {
 	if (auth.verifyUser(req) === null) {
 		return res.status(401).json({ errorMessage: 'Unauthorized access.' });
 	}
 	Playlist
 		.find({})
+		.select('name ownerName songs publishDate listens likeCount dislikeCount')
 		.exec()
 		.then((playlists: IPlaylist[]) => {
+			console.log(playlists)
 			if (!playlists.length) {
 				return res
 					.status(404)
