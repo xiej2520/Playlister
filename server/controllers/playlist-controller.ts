@@ -21,15 +21,6 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: express.Response
 		})
 	}
 
-	const playlist = new Playlist({
-		...body,
-		likeCount: 0,
-		dislikeCount: 0
-	});
-	if (!playlist) {
-		return res.status(400).json({ success: false, error: 'Invalid playlist sent to server.' })
-	}
-
 	User.findOne({ _id: req.userId }, (err: CallbackError, user: IUser) => {
 		if (user === null) {
 			return res.status(400).send("User could not be found.");
