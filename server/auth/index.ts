@@ -9,19 +9,18 @@ function authManager() {
 					return res.status(401).json({
 						loggedIn: false,
 						user: null,
-						errorMessage: 'Unauthorized'
+						errorMessage: 'Unauthorized: could not verify user.'
 					});
 				}
 				const verified = jwt.verify(token, process.env.JWT_SECRET);
-				req.userId = verified.userID;
-
+				req.userId = verified.userId;
 				next();
 			} catch (err) {
 				console.log(err);
 				return res.status(401).json({
 					loggedIn: false,
 					user: null,
-					errorMessage: 'Unauthorized'
+					errorMessage: 'Unauthorized: could not verify user.'
 				});
 			}
 		},

@@ -10,13 +10,21 @@ export interface ISong {
 
 export interface IPlaylist extends Document {
 	name: string;
+	ownerName: string;
 	ownerEmail: string;
-	songs: ISong[]
+	songs: ISong[];
+	publishDate: Date | null;
+	listens: number;
+	likeCount: number;
+	likes: Map<String, boolean>;
+	dislikeCount: number;
+	dislikes: Map<String, boolean>;
 };
 
 export const PlaylistSchema = new Schema<IPlaylist>(
 	{
 		name: { type: String, required: true },
+		ownerName: { type: String, required: true },
 		ownerEmail: { type: String, required: true },
 		songs: {
 			type: [{
@@ -24,7 +32,13 @@ export const PlaylistSchema = new Schema<IPlaylist>(
 				artist: String,
 				youTubeId: String
 			}], required: true
-		}
+		},
+		publishDate: { type: Date, required: false },
+		listens: { type: Number, required: false },
+		likeCount: { type: Number, required: true },
+		likes: { type: Map, of: String},
+		dislikeCount: { type: Number, required: true},
+		dislikes: { type: Map, of: String}
 	},
 	{ timestamps: true }
 );

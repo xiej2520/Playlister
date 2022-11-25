@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthContextProvider } from './auth'
-import { GlobalStoreContextProvider } from './store'
+import { StoreContextProvider } from './store'
 import './App.css';
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -21,7 +21,7 @@ function App() {
 			<CssBaseline/>
 			<BrowserRouter>
 				<AuthContextProvider>
-					<GlobalStoreContextProvider>
+					<StoreContextProvider>
 						<AppBanner/>
 						<Routes>
 							<Route path="/" element ={<WelcomeScreen/>}/>
@@ -29,7 +29,7 @@ function App() {
 							<Route path="/register" element={<RegisterScreen/>}/>
 							<Route path="/home" element={<HomeWrapper/>}/>
 						</Routes>
-					</GlobalStoreContextProvider>
+					</StoreContextProvider>
 				</AuthContextProvider>
 			</BrowserRouter>
 		</ThemeProvider>

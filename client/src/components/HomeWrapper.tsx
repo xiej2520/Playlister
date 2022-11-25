@@ -1,4 +1,5 @@
 import { Grid } from "@mui/material";
+import HomeScreen from "./HomeScreen";
 import YouTubeWrapper from "./YouTubeWrapper";
 
 export default function HomeWrapper() {
@@ -10,7 +11,7 @@ export default function HomeWrapper() {
 			}}
 		>
 			<Grid item xs={6} sx={{ height: "90%" }}>
-			Workspace
+				<HomeScreen/>
 			</Grid>
 			<Grid item xs={6} sx={{ height: "90%" }}>
 				<YouTubeWrapper/>

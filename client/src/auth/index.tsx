@@ -1,6 +1,5 @@
 import api from './auth-request-api'
 import React, { createContext, Dispatch, useReducer } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 interface User {
 	firstName: String;
@@ -32,8 +31,7 @@ export const enum AuthActionType {
 
 type AuthAction =
 	| { type: AuthActionType.GET_LOGGED_IN, payload: { user: User, loggedIn: boolean} }
-	| {
-		type: AuthActionType.LOGIN_USER, payload: { user: User } }
+	| { type: AuthActionType.LOGIN_USER, payload: { user: User } }
 	| { type: AuthActionType.LOGOUT_USER, payload: {} }
 	| { type: AuthActionType.REGISTER_USER, payload: { user: User }
 	}
@@ -45,21 +43,21 @@ export const AuthContext = createContext({state: defaultAuth, dispatch: authDefa
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const authReducer = (auth: AuthState, { type, payload }: AuthAction): AuthState => {
-		switch(type) {
+		switch (type) {
 			case AuthActionType.GET_LOGGED_IN: {
 				return {
 					...auth,
 					user: payload.user,
 					loggedIn: payload.loggedIn,
 					errorMsg: null
-				}
+				};
 			}
 			case AuthActionType.LOGIN_USER: {
 				return {
 					...auth,
 					user: payload.user,
 					loggedIn: true
-				}
+				};
 			}
 			case AuthActionType.LOGOUT_USER: {
 				return {
@@ -67,14 +65,14 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 					user: null,
 					loggedIn: false,
 					errorMsg: null
-				}
+				};
 			}
 			case AuthActionType.REGISTER_USER: {
 				return {
 					...auth,
 					user: payload.user,
 					loggedIn: true
-				}
+				};
 			}
 			default: return auth;
 		}
@@ -82,13 +80,11 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 
 	const [auth, authDispatch] = useReducer(authReducer, defaultAuth);
 
-	const navigate = useNavigate();
-
-	return <AuthContext.Provider value={{ state:auth, dispatch:authDispatch}}>{children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={{ state: auth, dispatch: authDispatch}}>{children}</AuthContext.Provider>;
 }
 
 export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
-	getLoggedIn: async function () {
+	getLoggedIn: async function() {
 		try {
 			const response = await api.getLoggedIn();
 			if (response.status === 200) {
@@ -115,15 +111,16 @@ export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
 	loginUser: async (email: string, password: string) => {
 		try {
 			const response = await api.loginUser(email, password);
-			console.log(response.status);
 			if (response.status === 200) {
-				console.log("dispatching")
 				authDispatch({ type: AuthActionType.LOGIN_USER, payload: { user: response.data.user}});
-				console.log("dispatch complete")
+				return true;
 			}
+			console.log("finished")
+			return false;
 		}
 		catch (err) {
 			console.log("Error encountered in loginUser.");
+			return false;
 		}
 	},
 	logoutUser: async () => {

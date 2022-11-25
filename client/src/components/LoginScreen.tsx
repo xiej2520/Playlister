@@ -26,8 +26,9 @@ export default function LoginScreen() {
 		const formElements = event.currentTarget.elements;
 		let email = (formElements.namedItem('email') as HTMLInputElement).value;
 		let password = (formElements.namedItem('password') as HTMLInputElement).value;
-		await AuthAPI.loginUser(email, password);
-		navigate('/home');
+		if (await AuthAPI.loginUser(email, password)) {
+			navigate('/home');
+		}
 	};
 	let modalJSX = null;
 	if (auth.errorMsg !== null) {

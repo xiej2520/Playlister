@@ -3,10 +3,11 @@ export {};
 const express = require('express');
 const PlaylistController = require('../controllers/playlist-controller');
 const router = express.Router();
-const auth = require('../auth');
+import auth from '../auth';
 
-/*
+router.get('/userplaylists', auth.verify, PlaylistController.getUserPlaylists);
 router.post('/playlist', auth.verify, PlaylistController.createPlaylist);
+/*
 router.delete('/playlist/:id', auth.verify, PlaylistController.deletePlaylist);
 router.get('/playlist/:id', auth.verify, PlaylistController.getPlaylistById);
 router.get('/playlistpairs', auth.verify, PlaylistController.getPlaylistPairs);

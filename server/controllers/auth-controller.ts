@@ -3,10 +3,11 @@ export {};
 import { Request, Response } from 'express';
 import auth from '../auth';
 import User from '../models/user-model';
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 import { IRegisterUserBody } from './requests/auth-requests';
 
 const getLoggedIn = async (req: Request, res: Response) => {
+	console.log("received getLoggedIn request")
 	try {
 		let userId = auth.verifyUser(req);
 		if (userId === null) {
@@ -39,9 +40,9 @@ const getLoggedIn = async (req: Request, res: Response) => {
 }
 
 const loginUser = async (req: Request, res: Response) => {
+	console.log("received loginUser request")
 	try {
 		const { email, password } = req.body;
-		console.log(`${email} ${password}`)
 		if (email === null || password === null) {
 			return res
 				.status(400)
@@ -82,6 +83,7 @@ const loginUser = async (req: Request, res: Response) => {
 }
 
 const logoutUser = async (_req: Request, res: Response) => {
+	console.log("received logoutUser request")
 	res.cookie("token", "", {
 		httpOnly: true,
 		expires: new Date(0),
@@ -91,6 +93,7 @@ const logoutUser = async (_req: Request, res: Response) => {
 }
 
 const registerUser = async (req: Request<{}, {}, IRegisterUserBody>, res: Response) => {
+	console.log("received registerUser request")
 	try {
 		const { firstName, lastName, email, password, passwordVerify } = req.body;
 		if (!firstName || !lastName || ! email || !password || !passwordVerify) {
@@ -118,7 +121,7 @@ const registerUser = async (req: Request<{}, {}, IRegisterUserBody>, res: Respon
 		}
 		const saltRounds = 10;
 		const salt = await bcrypt.genSalt(saltRounds);
-		const passwordHash = await bcrypt.ash(password, salt);
+		const passwordHash = await bcrypt.hash(password, salt);
 
 		const newUser = new User({ firstName, lastName, email, passwordHash});
 		const savedUser = await newUser.save();

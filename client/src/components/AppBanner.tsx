@@ -1,6 +1,6 @@
 import { Box, AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Button } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext, AuthAPICreator } from '../auth';
 import store from '../store';
 import SearchBar from './SearchBar';
@@ -13,14 +13,11 @@ import Sort from '@mui/icons-material/Sort';
 export default function AppBanner() {
 	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
 	const AuthAPI = AuthAPICreator(authDispatch);
-	useEffect(() => {
-		getAccountMenu().then((menu) => setAccountMenu(menu));
-	}, [])
 
+	const navigate = useNavigate();
 	const location = useLocation();
 	const isOnHome = location.pathname.split('/').includes('home');
 
-	const [accountMenu, setAccountMenu] = useState(<AccountCircle/>);
 	const [profileAnchorEl, setProfileAnchorEl] = useState<HTMLElement | null>(null);
 	const isProfileMenuOpen = Boolean(profileAnchorEl);
 	const [sortAnchorEl, setSortAnchorEl] = useState<HTMLElement | null>(null);
@@ -43,6 +40,7 @@ export default function AppBanner() {
 	const handleLogout = () => {
 		handleProfileMenuClose();
 		AuthAPI.logoutUser();
+		navigate('/');
 	}
 	const menuId = 'primary-search-account-menu';
 	const loggedOutMenu = (
@@ -89,8 +87,7 @@ export default function AppBanner() {
 		menu = loggedInMenu;
 	}
 
-	async function getAccountMenu() {
-		let loggedIn = await AuthAPI.getLoggedIn();
+	function getAccountMenu(loggedIn: boolean) {
 		let userInitials = AuthAPI.getUserInitials(auth);
 		if (loggedIn) { return <div>{userInitials}</div>; }
 		else { return <AccountCircle />; }
@@ -181,7 +178,7 @@ export default function AppBanner() {
 							onClick={handleProfileMenuOpen}
 							color="inherit"
 						>
-							{accountMenu}
+							{getAccountMenu(auth.loggedIn)}
 						</IconButton>
 					</Box>
 
