@@ -5,6 +5,7 @@ import tsTPS, { tsTPS_Transaction } from '../common/tsTPS';
 import CreateSongTransaction from './transactions/CreateSongTransaction';
 import RemoveSongTransaction from './transactions/RemoveSongTransaction';
 import EditSongTransaction from './transactions/EditSongTransaction';
+import MoveSongTransaction from './transactions/MoveSongTransaction';
 
 const tps = new tsTPS();
 
@@ -166,6 +167,27 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			this.updateCurrentPlaylist();
 		}
 	},
+	moveSong: function(start: number, end: number) {
+		if (store.openPlaylist !== null) {
+			let list = store.openPlaylist;
+
+			if (start < end) {
+				let temp = list.songs[start];
+				for (let i = start; i < end; i++) {
+					list.songs[i] = list.songs[i + 1];
+				}
+				list.songs[end] = temp;
+			}
+			else if (start > end) {
+				let temp = list.songs[start];
+				for (let i = start; i > end; i--) {
+					list.songs[i] = list.songs[i - 1];
+				}
+				list.songs[end] = temp;
+			}
+			this.updateCurrentPlaylist();
+		}
+	},
 	removeSong: function(index: number) {
 		if (store.openPlaylist !== null) {
 			store.openPlaylist.songs.splice(index, 1);
@@ -191,6 +213,14 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		}
 		else {
 			console.log('Tried to add song to null playlist.');
+		}
+	},
+	addMoveSongTransaction: function(start: number, end: number) {
+		if (store.openPlaylist !== null) {
+			tps.addTransaction(new MoveSongTransaction(this, start, end));
+		}
+		else {
+			console.log('Tried to move song in null playlist.');
 		}
 	},
 	addEditSongTransaction: function(newSong: ISong) {

@@ -26,9 +26,10 @@ function SongCard(props: { song: ISong, index: number}) {
 	}
 	function handleDrop(event: React.DragEvent<HTMLElement>) {
 		event.preventDefault();
-		let targetIndex = index;
-		let sourceIndex = Number(event.dataTransfer.getData('song'));
+		let startIndex = Number(event.dataTransfer.getData('song'));
+		let endIndex = index;
 		setDraggedTo(false);
+		StoreAPI.addMoveSongTransaction(startIndex, endIndex);
 	}
 	function handleRemoveSong(event: React.MouseEvent<HTMLButtonElement>) {
 		StoreAPI.showRemoveSongModal(index, song);
