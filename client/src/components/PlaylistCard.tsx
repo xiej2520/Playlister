@@ -27,6 +27,10 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 			}
 		};
 
+	function handleAddSong() {
+		StoreAPI.addCreateSongTransaction();
+	}
+
 	const publishedFields = playlist.publishDate !== null ? <></> : (
 		<>
 		<Grid item xs={6}>
@@ -105,6 +109,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				{
 					playlist.publishDate === null ?
 					<Button
+						onClick={handleAddSong}
 						sx={{
 							fontSize: '2rem',
 							height: '3rem',

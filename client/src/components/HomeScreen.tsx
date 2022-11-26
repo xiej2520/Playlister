@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useContext, useEffect, useState } from 'react';
 import { StoreAPICreator, StoreContext } from '../store';
+import EditSongModal from './EditSongModal';
 import PlaylistCard from './PlaylistCard';
 import RemoveSongModal from './RemoveSongModal';
 
@@ -25,6 +26,7 @@ function HomeScreen() {
 		
 	return (<>
 		{playlistCards}
+		<EditSongModal/>
 		<RemoveSongModal/>
 	</>);
 }

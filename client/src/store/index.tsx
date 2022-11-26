@@ -4,6 +4,7 @@ import { IPlaylistExport, ISong } from './playlist-model';
 import tsTPS, { tsTPS_Transaction } from '../common/tsTPS';
 import CreateSongTransaction from './transactions/CreateSongTransaction';
 import RemoveSongTransaction from './transactions/RemoveSongTransaction';
+import EditSongTransaction from './transactions/EditSongTransaction';
 
 const tps = new tsTPS();
 
@@ -141,8 +142,18 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	closeModal: function() {
 		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
-			modal: { type: ModalType.NONE}} }
+			modal: { type: ModalType.NONE }} }
 		);
+	},
+	showEditSongModal: function(index: number, song: ISong) {
+		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
+			modal: { type: ModalType.EDIT_SONG, fields: {
+				index: index,
+				title: song.title,
+				artist: song.artist,
+				youTubeId: song.youTubeId
+			}}
+		}});
 	},
 	showRemoveSongModal: function(index: number, song: ISong) {
 		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
@@ -157,8 +168,14 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	removeSong: function(index: number) {
 		if (store.openPlaylist !== null) {
-			console.log('removing song')
 			store.openPlaylist.songs.splice(index, 1);
+			this.updateCurrentPlaylist();
+		}
+	},
+	editSong: function(index: number, song: ISong) {
+		if (store.openPlaylist !== null) {
+			store.openPlaylist.songs[index] = song;
+			console.log(store.openPlaylist.songs[index]);
 			this.updateCurrentPlaylist();
 		}
 	},
@@ -176,8 +193,19 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			console.log('Tried to add song to null playlist.');
 		}
 	},
+	addEditSongTransaction: function(newSong: ISong) {
+		if (store.openPlaylist !== null && store.currentModal.type === ModalType.EDIT_SONG) {
+			let index = store.currentModal.fields.index;
+			let oldSong = store.openPlaylist.songs[index];
+			tps.addTransaction(new EditSongTransaction(this, index, oldSong, newSong));
+			this.closeModal()
+		}
+		else {
+			console.log('Tried to edit song of null playlist.')
+		}
+	},
 	addRemoveSongTransaction: function() {
-		if (store.openPlaylist !== null && store.currentModal.type == ModalType.REMOVE_SONG) {
+		if (store.openPlaylist !== null && store.currentModal.type === ModalType.REMOVE_SONG) {
 			let index = store.currentModal.fields.index;
 			let oldSong = store.openPlaylist.songs[index];
 			tps.addTransaction(new RemoveSongTransaction(this, index, oldSong));

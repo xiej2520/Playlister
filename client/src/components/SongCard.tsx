@@ -31,8 +31,12 @@ function SongCard(props: { song: ISong, index: number}) {
 		setDraggedTo(false);
 	}
 	function handleRemoveSong(event: React.MouseEvent<HTMLButtonElement>) {
-		console.log('showing remove song modal')
 		StoreAPI.showRemoveSongModal(index, song);
+	}
+	function handleClick(event: React.MouseEvent<HTMLElement>) {
+		if (event.detail === 2) {
+			StoreAPI.showEditSongModal(index, song);
+		}
 	}
 	return (
 		<Box
@@ -55,9 +59,7 @@ function SongCard(props: { song: ISong, index: number}) {
 			onDragEnter={handleDragEnter}
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}
-			/*
 			onClick={handleClick}
-			*/
 		>
 			{index + 1}.&nbsp;
 			<a
