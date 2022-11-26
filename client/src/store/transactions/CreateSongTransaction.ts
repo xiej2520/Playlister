@@ -1,8 +1,8 @@
 import { StoreAPICreator } from "..";
-import tsTPSTransaction from "../../common/tsTPS";
+import { tsTPS_Transaction } from "../../common/tsTPS";
 import { ISong } from "../playlist-model";
 
-export default class CreateSongTransaction extends tsTPSTransaction {
+export default class CreateSongTransaction extends tsTPS_Transaction {
 	StoreAPI: ReturnType<typeof StoreAPICreator>;
 	index: number;
 	song: ISong;

@@ -1,5 +1,5 @@
 import { StoreAPICreator } from "..";
-import tsTPS_Transaction from "../../common/tsTPS";
+import { tsTPS_Transaction } from "../../common/tsTPS";
 import { ISong } from "../playlist-model";
 
 export default class EditSongTransaction extends tsTPS_Transaction {

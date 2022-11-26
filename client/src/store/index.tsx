@@ -1,7 +1,7 @@
 import { createContext, Dispatch, useContext, useReducer, useState } from 'react';
 import api from './store-request-api';
 import { IPlaylistExport, ISong } from './playlist-model';
-import tsTPS, { tsTPS_Transaction } from '../common/tsTPS';
+import { tsTPS, tsTPS_Transaction } from '../common/tsTPS';
 import CreateSongTransaction from './transactions/CreateSongTransaction';
 import RemoveSongTransaction from './transactions/RemoveSongTransaction';
 import EditSongTransaction from './transactions/EditSongTransaction';
@@ -201,6 +201,12 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			this.updateCurrentPlaylist();
 		}
 	},
+	undo: function() {
+		tps.undoTransaction();
+	},
+	redo: function() {
+		tps.doTransaction();
+	},
 	addCreateSongTransaction: function() {
 		if (store.openPlaylist !== null) {
 			let song: ISong = {
@@ -244,6 +250,12 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		else {
 			console.log('Tried to remove song from null playlist.');
 		}
+	},
+	canUndo: function() {
+		return tps.hasTransactionToUndo();
+	},
+	canRedo: function() {
+		return tps.hasTransactionToRedo();
 	}
 
 })

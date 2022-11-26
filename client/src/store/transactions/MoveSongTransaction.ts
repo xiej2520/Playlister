@@ -1,5 +1,5 @@
-import { StoreAPICreator } from "..";
-import tsTPS_Transaction from "../../common/tsTPS";
+import { StoreAPICreator } from '..';
+import { tsTPS_Transaction } from '../../common/tsTPS';
 
 export default class MoveSongTransaction extends tsTPS_Transaction {
 	StoreAPI: ReturnType<typeof StoreAPICreator>;

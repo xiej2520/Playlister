@@ -3,7 +3,7 @@ export class tsTPS_Transaction {
 	undoTransaction() {};
 }
 
-export default class tsTPS {
+export class tsTPS {
 	transactions: tsTPS_Transaction[];
 	mostRecentTransaction: number;
 	performingDo: boolean;
@@ -66,9 +66,14 @@ export default class tsTPS {
 	}
 	toString() {
 		return `--Number of Transactions: ${this.size()}\n\
-		--Current index on Stack: ${this.mostRecentTransaction}\n\
-		--Current Transaction Stack:\n\
+--Current index on Stack: ${this.mostRecentTransaction}\n\
+--Current Transaction Stack:\n\
 		${this.transactions.slice(0, this.mostRecentTransaction+1)
 			.map(T => `----${T.toString()}\n`)}`;
 	}
+}
+
+export default {
+	tsTPS,
+	tsTPS_Transaction
 }

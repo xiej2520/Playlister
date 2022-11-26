@@ -3,6 +3,9 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
+import AddIcon from '@mui/icons-material/Add';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IPlaylistExport } from '../store/playlist-model';
 import { Box, Button, Grid, IconButton } from '@mui/material';
@@ -29,6 +32,14 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 
 	function handleAddSong() {
 		StoreAPI.addCreateSongTransaction();
+	}
+	function handleUndo(event: React.MouseEvent<HTMLButtonElement>) {
+		event.stopPropagation();
+		StoreAPI.undo();
+	}
+	function handleRedo(event: React.MouseEvent<HTMLButtonElement>) {
+		event.stopPropagation();
+		StoreAPI.redo();
 	}
 
 	const publishedFields = playlist.publishDate !== null ? <></> : (
@@ -61,8 +72,56 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		</Grid>
 		<Grid item xs={6}
 			display='flex'
-			sx={{flexDirection: 'column', justifyContent: 'center'}}
+			sx={{ flexDirection: 'column', justifyContent: 'center' }}
 		>Listens: </Grid>
+			{
+			playlist.publishDate === null && isExpanded ?
+			<Grid item xs={12}
+				sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}
+				onClick={event => {
+					event.preventDefault();
+					event.nativeEvent.stopImmediatePropagation();
+					event.stopPropagation();
+				}}
+			>
+				<Button
+					onClick={handleAddSong}
+					variant='contained'
+				>
+				<AddIcon/>
+				</Button>
+				<Button
+					disabled={!StoreAPI.canUndo()}
+					id='undo-button'
+					onClick={handleUndo}
+					variant='contained'>
+					<UndoIcon/>
+				</Button>
+				<Button
+					disabled={!StoreAPI.canRedo()}
+					id='redo-button'
+					onClick={handleRedo}
+					variant="contained">
+					<RedoIcon/>
+				</Button>
+				<Button
+					variant='contained'
+				>
+					Publish
+				</Button>
+				<Button
+					variant='contained'
+				>
+					Delete
+				</Button>
+				<Button
+					variant='contained'
+				>
+					Duplicate
+				</Button>
+			</Grid> :
+			<></>
+		}
 		</>
 	);
 
@@ -75,6 +134,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls="panel1bh-content"
 				id="panel1bh-header"
+				sx={{ bgcolor: 'grey.900', position: 'sticky', top: '0', zIndex: 100 }}
 			>
 				<Grid container>
 					<Grid item xs={6}>
@@ -105,21 +165,6 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 							song={song}
 						/>
 					))
-				}
-				{
-					playlist.publishDate === null ?
-					<Button
-						onClick={handleAddSong}
-						sx={{
-							fontSize: '2rem',
-							height: '3rem',
-							width: '100%'
-						}}
-						variant='contained'
-					>
-					+
-					</Button> :
-					<></>
 				}
 			</AccordionDetails>
 		</Accordion>
