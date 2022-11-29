@@ -1,5 +1,6 @@
 import AppBanner from './AppBanner';
 import HomeWrapper from './HomeWrapper';
+import DeletePlaylistModal from './DeletePlaylistModal';
 import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
 import RemoveSongModal from './RemoveSongModal';
@@ -11,6 +12,7 @@ import YouTubeWrapper from './YouTubeWrapper';
 export {
 	AppBanner,
 	HomeWrapper,
+	DeletePlaylistModal,
 	LoginScreen,
 	RegisterScreen,
 	RemoveSongModal,

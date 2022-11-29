@@ -1,4 +1,5 @@
-import { Box } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { Box, Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { StoreAPICreator, StoreContext } from '../store';
 
@@ -7,6 +8,10 @@ function StatusBar() {
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
 	const [openPlaylist, setOpenPlaylist] = useState<string | null>(null);
+	
+	function handleCreatePlaylist() {
+		StoreAPI.createPlaylist();
+	}
 		
 	return (
 		<Box
@@ -16,6 +21,12 @@ function StatusBar() {
 				justifyContent: 'center', display: 'flex' 
 			}}
 		>
+		<Button
+			onClick={handleCreatePlaylist}
+			variant='contained'
+		>
+			<AddIcon/>
+		</Button>
 		STATUS
 		</Box>
 	)

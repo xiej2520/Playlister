@@ -6,6 +6,7 @@ import CreateSongTransaction from './transactions/CreateSongTransaction';
 import RemoveSongTransaction from './transactions/RemoveSongTransaction';
 import EditSongTransaction from './transactions/EditSongTransaction';
 import MoveSongTransaction from './transactions/MoveSongTransaction';
+import { Modal } from '@mui/material';
 
 const tps = new tsTPS();
 
@@ -32,14 +33,14 @@ export const enum CurrentScreen {
 
 export const enum ModalType {
 	NONE,
-	DELETE_LIST,
+	DELETE_PLAYLIST,
 	EDIT_SONG,
 	REMOVE_SONG
 };
 
 type CurrentModal =
 	| { type: ModalType.NONE }
-	| { type: ModalType.DELETE_LIST, fields: { playlistId: string, playlistName: string } }
+	| { type: ModalType.DELETE_PLAYLIST, fields: { playlistId: string, playlistName: string } }
 	| { type: ModalType.EDIT_SONG, fields: { index: number, title: string, artist: string, youTubeId: string } }
 	| { type: ModalType.REMOVE_SONG, fields: { index: number, title: string } }
 ;
@@ -129,6 +130,16 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			playlist: playlist
 		}});
 	},
+	createPlaylist: async function() {
+		try {
+			const response = await api.createPlaylist(
+				'Untitled Playlist', [], '');
+			this.getUserPlaylists();
+		}
+		catch (err) {
+			console.log(err);
+		}
+	},
 	updateCurrentPlaylist: async function() {
 		try {
 			if (store.openPlaylist !== null) {
@@ -139,6 +150,24 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		}
 		catch (err) {
 			console.log(err);
+		}
+	},
+	showDeletePlaylistModal: function(playlist: IPlaylistExport) {
+		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
+			modal: { type: ModalType.DELETE_PLAYLIST, fields: {
+				playlistId: playlist._id,
+				playlistName: playlist.name
+			}}
+		}});
+	},
+	deletePlaylist: async function() {
+		if (store.currentModal.type === ModalType.DELETE_PLAYLIST) {
+			await api.deletePlaylistById(store.currentModal.fields.playlistId);
+			this.closeModal();
+			this.getUserPlaylists();
+		}
+		else {
+			console.log('Error: tried to delete playlist without open modal.');
 		}
 	},
 	closeModal: function() {

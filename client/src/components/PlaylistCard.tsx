@@ -41,6 +41,10 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		event.stopPropagation();
 		StoreAPI.redo();
 	}
+	function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
+		event.stopPropagation();
+		StoreAPI.showDeletePlaylistModal(playlist);
+	}
 
 	const publishedFields = playlist.publishDate !== null ? <></> : (
 		<>
@@ -110,6 +114,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 					Publish
 				</Button>
 				<Button
+					onClick={handleDelete}
 					variant='contained'
 				>
 					Delete
