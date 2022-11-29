@@ -21,7 +21,7 @@ export default function HomeWrapper() {
 				container
 				alignItems='center'
 				justifyContent='center'
-				sx={{ height: '10vh', align: 'center'}}
+				sx={{ height: '8vh', align: 'center'}}
 			>
 				<StatusBar/>
 			</Grid>

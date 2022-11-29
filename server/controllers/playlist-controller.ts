@@ -91,7 +91,7 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: express.Response
 		return res.status(401).json({ errorMessage: 'Unauthorized access.' });
 	}
 	Playlist
-		.find({})
+		.find({ id: req.userId })
 		.select('name ownerName songs publishDate listens likeCount dislikeCount')
 		.exec()
 		.then((playlists: IPlaylist[]) => {

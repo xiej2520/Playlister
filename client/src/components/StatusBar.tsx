@@ -1,7 +1,6 @@
 import { Box } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { StoreAPICreator, StoreContext } from '../store';
-import PlaylistCard from './PlaylistCard';
 
 function StatusBar() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);

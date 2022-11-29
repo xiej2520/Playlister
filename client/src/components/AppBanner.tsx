@@ -6,7 +6,7 @@ import store from '../store';
 import SearchBar from './SearchBar';
 
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Group from '@mui/icons-material/Group';
+import People from '@mui/icons-material/Group';
 import Person from '@mui/icons-material/Person';
 import Sort from '@mui/icons-material/Sort';
 
@@ -124,7 +124,7 @@ export default function AppBanner() {
 								aria-haspopup="true"
 								color="inherit"
 							>
-								<Group/>
+								<People/>
 							</IconButton>
 							
 							<Box sx={{ flexGrow: 1}}/>

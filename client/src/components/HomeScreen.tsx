@@ -15,7 +15,7 @@ function HomeScreen() {
 	}, [])
 
 	let playlistCards = (
-		<Box sx={{ height: '82.5vh', overflow: 'scroll' }}>
+		<Box sx={{ height: '85vh', overflow: 'scroll' }}>
 			{store.playlists.map((playlist) => (
 				<PlaylistCard
 					key={playlist._id}
