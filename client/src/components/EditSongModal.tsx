@@ -1,19 +1,37 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StoreContext, StoreAPICreator, ModalType } from "../store";
 import Modal from '@mui/material/Modal';
 import { Box, Button } from "@mui/material";
-import { ISong } from "../store/playlist-model";
 
 function EditSongModal() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
-	if (store.currentModal.type !== ModalType.EDIT_SONG) {
-		return <></>;
-	}
+	/*
 	const [title, setTitle] = useState(store.currentModal.fields.title);
 	const [artist, setArtist] = useState(store.currentModal.fields.artist);
 	const [youTubeId, setYouTubeId] = useState(store.currentModal.fields.youTubeId);
+	*/
+	useEffect(() => {
+		if (store.currentModal.type === ModalType.EDIT_SONG) {
+			setTitle(store.currentModal.fields.title);
+			setArtist(store.currentModal.fields.artist);
+			setYouTubeId(store.currentModal.fields.youTubeId);
+		}
+		else {
+			setTitle('');
+			setArtist('');
+			setYouTubeId('');
+		}
+
+	}, [store.currentModal]);
+	const [title, setTitle] = useState('');
+	const [artist, setArtist] = useState('');
+	const [youTubeId, setYouTubeId] = useState('');
+
+	if (store.currentModal.type !== ModalType.EDIT_SONG) {
+		return <></>;
+	}
 
 	function handleConfirmEditSong() {
 		StoreAPI.addEditSongTransaction({

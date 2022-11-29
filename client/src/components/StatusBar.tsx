@@ -23,10 +23,11 @@ function StatusBar() {
 		>
 		<Button
 			onClick={handleCreatePlaylist}
+			sx={{ bgcolor: 'background.paper'}}
 			variant='contained'
 		>
 			<AddIcon/>
-		</Button>
+		</Button>&nbsp;
 		STATUS
 		</Box>
 	)
