@@ -140,10 +140,19 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			console.log(err);
 		}
 	},
+	editPlaylistName: async function(playlist: IPlaylistExport, newName: string) {
+		try {
+			playlist.name = newName;
+			const response = await api.updatePlaylistById(playlist);
+			this.getUserPlaylists();
+		}
+		catch (err) {
+			console.log(err);
+		}
+	},
 	updateCurrentPlaylist: async function() {
 		try {
 			if (store.openPlaylist !== null) {
-				console.log('updating playlist')
 				const response = await api.updatePlaylistById(store.openPlaylist);
 				this.getUserPlaylists();
 			}

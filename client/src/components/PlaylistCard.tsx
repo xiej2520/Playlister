@@ -1,23 +1,26 @@
-import * as React from 'react';
+import { useContext, useState } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
+import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IPlaylistExport } from '../store/playlist-model';
-import { Box, Button, Grid, IconButton } from '@mui/material';
+import { Box, Button, Grid, IconButton, TextField } from '@mui/material';
 import { ThumbUp, ThumbDown } from '@mui/icons-material';
 import SongCard from './SongCard';
 import { StoreContext, StoreAPICreator, StoreActionType } from '../store';
 
 function PlaylistCard(props: { playlist: IPlaylistExport }) {
-	const { state: store, dispatch: storeDispatch } = React.useContext(StoreContext);
+	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
 	const { playlist } = props;
+	const [editActive, setEditActive] = useState(false);
+	const [text, setText] = useState(playlist.name);
 	const isExpanded = store.openPlaylist !== null && store.openPlaylist._id === playlist._id;
 
 	const handleChange =
@@ -45,10 +48,28 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		event.stopPropagation();
 		StoreAPI.showDeletePlaylistModal(playlist);
 	}
+	function handleEditName(event: React.MouseEvent<HTMLButtonElement>) {
+		event.stopPropagation();
+		setEditActive(true);
+	}
+	function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.code === 'Enter') {
+			StoreAPI.editPlaylistName(playlist, text);
+			setEditActive(false);
+		}
+	}
+	function handleUpdateText(event: React.ChangeEvent<HTMLInputElement>) {
+		setText(event.target.value);
+	}
 
-	const publishedFields = playlist.publishDate !== null ? <></> : (
+	const publishedFields = playlist.publishDate !== null ?
+	<></> : (
 		<>
-		<Grid item xs={6}>
+		<Grid item xs={8}
+			display='flex'
+			sx={{flexDirection: 'column', justifyContent: 'center'}}
+		>Published: {String(playlist.publishDate)}</Grid>
+		<Grid item xs={4}>
 			<IconButton
 				size="medium"
 				edge="end"
@@ -59,11 +80,11 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				<ThumbUp/>
 			</IconButton>
 		</Grid>
-		<Grid item xs={6}
+		<Grid item xs={8}
 			display='flex'
-			sx={{flexDirection: 'column', justifyContent: 'center'}}
-		>Published: {String(playlist.publishDate)}</Grid>
-		<Grid item xs={6}>
+			sx={{ flexDirection: 'column', justifyContent: 'center' }}
+		>Listens: </Grid>
+		<Grid item xs={4}>
 			<IconButton
 				size="medium"
 				edge="end"
@@ -74,10 +95,6 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				<ThumbDown/>
 			</IconButton>
 		</Grid>
-		<Grid item xs={6}
-			display='flex'
-			sx={{ flexDirection: 'column', justifyContent: 'center' }}
-		>Listens: </Grid>
 			{
 			playlist.publishDate === null && isExpanded ?
 			<Grid item xs={12}
@@ -142,13 +159,29 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				sx={{ bgcolor: 'grey.900', position: 'sticky', top: '0', zIndex: 100 }}
 			>
 				<Grid container>
-					<Grid item xs={6}>
-						<Typography variant='h5' sx={{ width: '50%', flexShrink: 0 }}>
-							{playlist.name}
-						</Typography>
+					<Grid item xs={8}>
+						{
+						editActive ?
+							<TextField
+								fullWidth
+								onKeyPress={handleKeyPress}
+								onClick={(event: any) => {event.stopPropagation()}}
+								onChange={handleUpdateText}
+								defaultValue={playlist.name}
+								autoFocus
+							>
+							</TextField> :
+							<Typography variant='h5' sx={{ flexShrink: 0 }}>
+								{playlist.name}
+								<IconButton
+									onClick={handleEditName}>
+									<EditIcon/>
+								</IconButton>
+							</Typography>
+						}
 					</Grid>
 					<Grid
-						item xs={6}
+						item xs={4}
 						display='flex'
 						sx={{flexDirection: 'column', justifyContent: 'center'}}
 					>

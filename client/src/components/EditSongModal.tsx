@@ -7,11 +7,6 @@ function EditSongModal() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
-	/*
-	const [title, setTitle] = useState(store.currentModal.fields.title);
-	const [artist, setArtist] = useState(store.currentModal.fields.artist);
-	const [youTubeId, setYouTubeId] = useState(store.currentModal.fields.youTubeId);
-	*/
 	useEffect(() => {
 		if (store.currentModal.type === ModalType.EDIT_SONG) {
 			setTitle(store.currentModal.fields.title);
