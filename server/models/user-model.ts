@@ -7,18 +7,22 @@ const ObjectId = Schema.Types.ObjectId;
 export interface IUser extends Document {
 	firstName: string;
 	lastName: string;
+	username: string;
 	email: string;
 	passwordHash: string;
 	playlists: Types.ObjectId[];
+	playlistCount: number;
 };
 
 export const UserSchema = new Schema<IUser>(
 	{
 		firstName: { type: String, required: true },
 		lastName: { type: String, required: true },
+		username: { type: String, required: true},
 		email: { type: String, required: true },
 		passwordHash: { type: String, required: true },
-		playlists: [{ type: ObjectId, ref: 'Playlist' }]
+		playlists: [{ type: ObjectId, ref: 'Playlist' }],
+		playlistCount: { type: Number, required: true }
 	},
 	{ timestamps: true}
 );

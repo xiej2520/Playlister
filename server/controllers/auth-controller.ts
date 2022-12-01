@@ -7,7 +7,6 @@ import bcrypt from 'bcryptjs';
 import { IRegisterUserBody } from './requests/auth-requests';
 
 const getLoggedIn = async (req: Request, res: Response) => {
-	console.log("received getLoggedIn request")
 	try {
 		let userId = auth.verifyUser(req);
 		if (userId === null) {
@@ -40,7 +39,6 @@ const getLoggedIn = async (req: Request, res: Response) => {
 }
 
 const loginUser = async (req: Request, res: Response) => {
-	console.log("received loginUser request")
 	try {
 		const { email, password } = req.body;
 		if (email === null || password === null) {
@@ -93,10 +91,9 @@ const logoutUser = async (_req: Request, res: Response) => {
 }
 
 const registerUser = async (req: Request<{}, {}, IRegisterUserBody>, res: Response) => {
-	console.log("received registerUser request")
 	try {
-		const { firstName, lastName, email, password, passwordVerify } = req.body;
-		if (!firstName || !lastName || ! email || !password || !passwordVerify) {
+		const { firstName, lastName, username, email, password, passwordVerify } = req.body;
+		if (!firstName || !lastName || !username || ! email || !password || !passwordVerify) {
 			return res
 				.status(400)
 				.json({ errorMessage: 'Please enter all required fields.' });
@@ -123,7 +120,7 @@ const registerUser = async (req: Request<{}, {}, IRegisterUserBody>, res: Respon
 		const salt = await bcrypt.genSalt(saltRounds);
 		const passwordHash = await bcrypt.hash(password, salt);
 
-		const newUser = new User({ firstName, lastName, email, passwordHash});
+		const newUser = new User({ firstName, lastName, username, email, passwordHash, playlistCount: 0});
 		const savedUser = await newUser.save();
 
 		const token = auth.signToken(savedUser._id); 
@@ -137,6 +134,7 @@ const registerUser = async (req: Request<{}, {}, IRegisterUserBody>, res: Respon
 			user: {
 				firstName: savedUser.firstName,
 				lastName: savedUser.lastName,
+				username: savedUser.username,
 				email: savedUser.email
 			}
 		});

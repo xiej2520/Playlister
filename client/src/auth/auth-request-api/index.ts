@@ -13,11 +13,12 @@ export const loginUser = (email: string, password: string) => {
 }
 export const logoutUser = () => api.get(`/logout/`)
 export const registerUser = (
-	firstName: string, lastName: string, email: string,
+	firstName: string, lastName: string, username: string, email: string,
 	password: string, passwordVerify: string) => {
 	return api.post(`/register/`, {
 		firstName: firstName,
 		lastName: lastName,
+		username: username,
 		email: email,
 		password: password,
 		passwordVerify: passwordVerify

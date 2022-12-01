@@ -10,14 +10,18 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Paper } from '@mui/material';
+import { useNavigate } from 'react-router';
 
 export default function RegisterScreen() {
 	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
 	const AuthAPI = AuthAPICreator(authDispatch);
 
+	const navigate = useNavigate();
+
 	interface RegisterFormElements extends HTMLFormControlsCollection {
 		firstName: HTMLInputElement,
 		lastName: HTMLInputElement,
+		username: HTMLInputElement,
 		email: HTMLInputElement,
 		password: HTMLInputElement,
 		passwordVerify: HTMLInputElement
@@ -25,16 +29,19 @@ export default function RegisterScreen() {
 	interface RegisterFormElement extends HTMLFormElement {
 		readonly elements: RegisterFormElements
 	};
-	const handleSubmit = (event: React.FormEvent<RegisterFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<RegisterFormElement>) => {
 		event.preventDefault();
 		const formElements = event.currentTarget.elements;
-		AuthAPI.registerUser(
+		if (await AuthAPI.registerUser(
 			formElements.firstName.value,
 			formElements.lastName.value,
+			formElements.username.value,
 			formElements.email.value,
 			formElements.password.value,
 			formElements.passwordVerify.value
-		);
+		)) {
+			navigate('/home');
+		}
 	};
 	let modalJSX = ""
 	if (auth.errorMsg !== null) {
@@ -80,6 +87,16 @@ export default function RegisterScreen() {
 								label="Last Name"
 								name="lastName"
 								autoComplete="lname"
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								required
+								fullWidth
+								id="username"
+								label="Username"
+								name="username"
+								autoComplete="username"
 							/>
 						</Grid>
 						<Grid item xs={12}>

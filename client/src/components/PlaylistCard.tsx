@@ -4,21 +4,19 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-import UndoIcon from '@mui/icons-material/Undo';
-import RedoIcon from '@mui/icons-material/Redo';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IPlaylistExport } from '../store/playlist-model';
 import { Box, Button, Grid, IconButton, TextField } from '@mui/material';
 import { ThumbUp, ThumbDown } from '@mui/icons-material';
 import SongCard from './SongCard';
 import { StoreContext, StoreAPICreator, StoreActionType } from '../store';
+import { EditToolbar } from '.';
 
 function PlaylistCard(props: { playlist: IPlaylistExport }) {
+	const { playlist } = props;
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
-	const { playlist } = props;
 	const [editActive, setEditActive] = useState(false);
 	const [text, setText] = useState(playlist.name);
 	const isExpanded = store.openPlaylist !== null && store.openPlaylist._id === playlist._id;
@@ -32,22 +30,6 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				StoreAPI.setOpenPlaylist(playlist);
 			}
 		};
-
-	function handleAddSong() {
-		StoreAPI.addCreateSongTransaction();
-	}
-	function handleUndo(event: React.MouseEvent<HTMLButtonElement>) {
-		event.stopPropagation();
-		StoreAPI.undo();
-	}
-	function handleRedo(event: React.MouseEvent<HTMLButtonElement>) {
-		event.stopPropagation();
-		StoreAPI.redo();
-	}
-	function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
-		event.stopPropagation();
-		StoreAPI.showDeletePlaylistModal(playlist);
-	}
 	function handleEditName(event: React.MouseEvent<HTMLButtonElement>) {
 		event.stopPropagation();
 		setEditActive(true);
@@ -62,14 +44,16 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		setText(event.target.value);
 	}
 
-	const publishedFields = playlist.publishDate !== null ?
-	<></> : (
+	const published = playlist.publishDate !== null;
+	const publishDate = published ? 
+	new Date(playlist.publishDate!).toLocaleString().split(',')[0] : '';
+	const publishedFields = published ?
 		<>
 		<Grid item xs={8}
 			display='flex'
 			sx={{flexDirection: 'column', justifyContent: 'center'}}
-		>Published: {String(playlist.publishDate)}</Grid>
-		<Grid item xs={4}>
+		>Published: {publishDate}</Grid>
+		<Grid item xs={4} container alignItems='center' >
 			<IconButton
 				size="medium"
 				edge="end"
@@ -78,13 +62,14 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				color="inherit"
 			>
 				<ThumbUp/>
-			</IconButton>
+			</IconButton>&nbsp;&nbsp;&nbsp;
+			{playlist.likeCount}
 		</Grid>
 		<Grid item xs={8}
 			display='flex'
 			sx={{ flexDirection: 'column', justifyContent: 'center' }}
-		>Listens: </Grid>
-		<Grid item xs={4}>
+		>Listens: {playlist.listens}</Grid>
+		<Grid item xs={4} container alignItems='center' >
 			<IconButton
 				size="medium"
 				edge="end"
@@ -93,59 +78,12 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				color="inherit"
 			>
 				<ThumbDown/>
-			</IconButton>
+			</IconButton>&nbsp;&nbsp;&nbsp;
+			{playlist.dislikeCount}
 		</Grid>
-			{
-			playlist.publishDate === null && isExpanded ?
-			<Grid item xs={12}
-				sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}
-				onClick={event => {
-					event.preventDefault();
-					event.nativeEvent.stopImmediatePropagation();
-					event.stopPropagation();
-				}}
-			>
-				<Button
-					onClick={handleAddSong}
-					variant='contained'
-				>
-				<AddIcon/>
-				</Button>
-				<Button
-					disabled={!StoreAPI.canUndo()}
-					id='undo-button'
-					onClick={handleUndo}
-					variant='contained'>
-					<UndoIcon/>
-				</Button>
-				<Button
-					disabled={!StoreAPI.canRedo()}
-					id='redo-button'
-					onClick={handleRedo}
-					variant="contained">
-					<RedoIcon/>
-				</Button>
-				<Button
-					variant='contained'
-				>
-					Publish
-				</Button>
-				<Button
-					onClick={handleDelete}
-					variant='contained'
-				>
-					Delete
-				</Button>
-				<Button
-					variant='contained'
-				>
-					Duplicate
-				</Button>
-			</Grid> :
-			<></>
-		}
-		</>
-	);
+	</> :
+	<></>
+	;
 
 	return (
 		<Accordion
@@ -173,10 +111,11 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 							</TextField> :
 							<Typography variant='h5' sx={{ flexShrink: 0 }}>
 								{playlist.name}
+								{published ? <></> :
 								<IconButton
 									onClick={handleEditName}>
 									<EditIcon/>
-								</IconButton>
+								</IconButton>}
 							</Typography>
 						}
 					</Grid>
@@ -190,6 +129,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 						</Typography>
 					</Grid>
 				{publishedFields}
+				<EditToolbar playlist={playlist}/>
 				</Grid>
 			</AccordionSummary>
 			<AccordionDetails

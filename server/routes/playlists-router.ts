@@ -7,6 +7,7 @@ import auth from '../auth';
 
 router.get('/userplaylists', auth.verify, PlaylistController.getUserPlaylists);
 router.post('/playlist', auth.verify, PlaylistController.createPlaylist);
+router.put('/playlist/publish/:id', auth.verify, PlaylistController.publishPlaylist);
 router.put('/playlist/:id', auth.verify, PlaylistController.updatePlaylist);
 router.delete('/playlist/:id', auth.verify, PlaylistController.deletePlaylist);
 /*

@@ -129,11 +129,23 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		storeDispatch({ type: StoreActionType.SET_OPEN_PLAYLIST, payload: {
 			playlist: playlist
 		}});
+		tps.clearAllTransactions();
 	},
 	createPlaylist: async function() {
 		try {
 			const response = await api.createPlaylist(
 				'Untitled Playlist', [], '');
+			this.getUserPlaylists();
+		}
+		catch (err) {
+			console.log(err);
+		}
+	},
+	duplicatePlaylist: async function(playlist: IPlaylistExport) {
+		try {
+			const response = await api.createPlaylist(
+				playlist.name + '(Copy)', playlist.songs, ''
+			);
 			this.getUserPlaylists();
 		}
 		catch (err) {
@@ -154,6 +166,17 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		try {
 			if (store.openPlaylist !== null) {
 				const response = await api.updatePlaylistById(store.openPlaylist);
+				this.getUserPlaylists();
+			}
+		}
+		catch (err) {
+			console.log(err);
+		}
+	},
+	publishPlaylist: async function() {
+		try {
+			if (store.openPlaylist !== null) {
+				const response = await api.publishPlaylistById(store.openPlaylist._id);
 				this.getUserPlaylists();
 			}
 		}

@@ -26,7 +26,7 @@ export const enum AuthActionType {
 	LOGIN_USER,
 	LOGOUT_USER,
 	REGISTER_USER,
-	DISMISS_ERROR
+	SET_ERROR_MESSAGE
 };
 
 type AuthAction =
@@ -35,7 +35,7 @@ type AuthAction =
 	| { type: AuthActionType.LOGOUT_USER, payload: {} }
 	| { type: AuthActionType.REGISTER_USER, payload: { user: User }
 	}
-	| { type: AuthActionType.DISMISS_ERROR, payload: {} }
+	| { type: AuthActionType.SET_ERROR_MESSAGE, payload: { errorMsg: string | null } }
 
 const authDefaultDispatch: Dispatch<AuthAction> = () => defaultAuth;
 
@@ -72,6 +72,13 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 					...auth,
 					user: payload.user,
 					loggedIn: true
+				};
+			}
+			case AuthActionType.SET_ERROR_MESSAGE: {
+				console.log(payload.errorMsg)
+				return {
+					...auth,
+					errorMsg: payload.errorMsg
 				};
 			}
 			default: return auth;
@@ -115,11 +122,14 @@ export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
 				authDispatch({ type: AuthActionType.LOGIN_USER, payload: { user: response.data.user}});
 				return true;
 			}
-			console.log("finished")
 			return false;
 		}
-		catch (err) {
-			console.log("Error encountered in loginUser.");
+		catch (err: any) {
+			console.log(err.response.data.errorMessage);
+			authDispatch({
+				type: AuthActionType.SET_ERROR_MESSAGE,
+				payload: { errorMsg: err.response.data.errorMessage }
+			});
 			return false;
 		}
 	},
@@ -134,22 +144,37 @@ export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
 			console.log("Error encountered in logoutUser.");
 		}
 	},
-	registerUser: async (firstName: string, lastName: string, email: string,
-			password: string, passwordVerify: string) => {
+	registerUser: async (firstName: string, lastName: string, username: string, 
+		email: string, password: string, passwordVerify: string) => {
 		try {
-			const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);
+			const response = await api.registerUser(
+				firstName, lastName, username, email, password, passwordVerify
+			);
 			if (response.status === 200) {
 				authDispatch({
 					type: AuthActionType.REGISTER_USER,
 					payload: {
 						user: response.data.user,
 					}
-				})
+				});
+				return true;
 			}
 		}
-		catch (err) {
-			console.log("Error encountered in registerUser.");
+		catch (err: any) {
+			authDispatch({
+				type: AuthActionType.SET_ERROR_MESSAGE,
+				payload: {
+					errorMsg: err.response.data.errorMessage
+				}
+			});
+			return false;
 		}
+	},
+	setErrorMessage: function(errorMsg: string | null) {
+		authDispatch({
+			type: AuthActionType.SET_ERROR_MESSAGE,
+			payload: { errorMsg: errorMsg }
+		});
 	}
 })
 
