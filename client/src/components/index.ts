@@ -1,11 +1,12 @@
 import AppBanner from './AppBanner';
-import AuthErrorModal from './AuthErrorModal';
+import AuthErrorModal from './modals/AuthErrorModal';
 import HomeWrapper from './HomeWrapper';
-import DeletePlaylistModal from './DeletePlaylistModal';
+import DeletePlaylistModal from './modals/DeletePlaylistModal';
 import EditToolbar from './EditToolbar';
 import LoginScreen from './LoginScreen';
+import PublishPlaylistModal from './modals/PublishPlaylistModal';
 import RegisterScreen from './RegisterScreen';
-import RemoveSongModal from './RemoveSongModal';
+import RemoveSongModal from './modals/RemoveSongModal';
 import SearchBar from './SearchBar';
 import StatusBar from './StatusBar';
 import WelcomeScreen from './WelcomeScreen';
@@ -18,6 +19,7 @@ export {
 	DeletePlaylistModal,
 	EditToolbar,
 	LoginScreen,
+	PublishPlaylistModal,
 	RegisterScreen,
 	RemoveSongModal,
 	SearchBar,

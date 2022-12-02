@@ -2,10 +2,11 @@ import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useContext, useEffect, useState } from 'react';
 import { StoreAPICreator, StoreContext } from '../store';
-import DeletePlaylistModal from './DeletePlaylistModal';
-import EditSongModal from './EditSongModal';
+import DeletePlaylistModal from './modals/DeletePlaylistModal';
+import EditSongModal from './modals/EditSongModal';
 import PlaylistCard from './PlaylistCard';
-import RemoveSongModal from './RemoveSongModal';
+import RemoveSongModal from './modals/RemoveSongModal';
+import PublishPlaylistModal from './modals/PublishPlaylistModal';
 
 function HomeScreen() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
@@ -29,6 +30,7 @@ function HomeScreen() {
 		{playlistCards}
 		<DeletePlaylistModal/>
 		<EditSongModal/>
+		<PublishPlaylistModal/>
 		<RemoveSongModal/>
 	</>);
 }

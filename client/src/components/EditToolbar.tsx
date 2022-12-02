@@ -25,7 +25,7 @@ function EditToolbar(props: { playlist: IPlaylistExport }) {
 	}
 	function handlePublish(event: React.MouseEvent<HTMLButtonElement>) {
 		event.stopPropagation();
-		StoreAPI.publishPlaylist();
+		StoreAPI.showPublishPlaylistModal(playlist);
 	}
 	function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
 		event.stopPropagation();

@@ -92,8 +92,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 			{playlist.dislikeCount}
 		</Grid>
 	</> :
-	<></>
-	;
+	<></>;
 
 	return (
 		<Accordion

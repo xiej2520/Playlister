@@ -33,6 +33,7 @@ export const enum CurrentScreen {
 export const enum ModalType {
 	NONE,
 	DELETE_PLAYLIST,
+	PUBLISH_PLAYLIST,
 	EDIT_SONG,
 	REMOVE_SONG
 };
@@ -40,6 +41,7 @@ export const enum ModalType {
 type CurrentModal =
 	| { type: ModalType.NONE }
 	| { type: ModalType.DELETE_PLAYLIST, fields: { playlistId: string, playlistName: string } }
+	| { type: ModalType.PUBLISH_PLAYLIST, fields: { playlistId: string, playlistName: string } }
 	| { type: ModalType.EDIT_SONG, fields: { index: number, title: string, artist: string, youTubeId: string } }
 	| { type: ModalType.REMOVE_SONG, fields: { index: number, title: string } }
 ;
@@ -169,10 +171,18 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			console.log(err);
 		}
 	},
+	showPublishPlaylistModal: function(playlist: IPlaylistExport) {
+		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
+			modal: { type: ModalType.PUBLISH_PLAYLIST, fields: {
+				playlistId: playlist._id,
+				playlistName: playlist.name
+			}}
+		}});
+	},
 	publishPlaylist: async function() {
 		try {
-			if (store.openPlaylist !== null) {
-				const response = await api.publishPlaylistById(store.openPlaylist._id);
+			if (store.currentModal.type === ModalType.PUBLISH_PLAYLIST) {
+				const response = await api.publishPlaylistById(store.currentModal.fields.playlistId);
 				this.getUserPlaylists();
 			}
 		}

@@ -1,40 +1,41 @@
 import { useContext } from "react";
-import { StoreContext, StoreAPICreator, ModalType } from "../store";
+import { StoreContext, StoreAPICreator, ModalType } from "../../store";
 import Modal from '@mui/material/Modal';
 import { Box, Button } from "@mui/material";
 
-function DeletePlaylistModal() {
+function RemoveSongModal() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
-	function handleConfirmDeletePlaylist() {
-		StoreAPI.deletePlaylist()
+	function handleConfirmRemoveSong() {
+		StoreAPI.addRemoveSongTransaction()
 	}
-	function handleCancelDeletePlaylist() {
+	function handleCancelRemoveSong() {
 		StoreAPI.closeModal();
 	}
 
 	let isOpen = false;
-	let playlistName = '';
-	if (store.currentModal.type === ModalType.DELETE_PLAYLIST) {
+	let title = '';
+	if (store.currentModal.type === ModalType.REMOVE_SONG) {
 		isOpen = true;
-		playlistName = store.currentModal.fields.playlistName;
+		title = store.currentModal.fields.title;
 	}
 	return (
 		isOpen ? 
 		<Modal open={isOpen}>
 			<Box className='modal'>
 				<div className='modal-header'>
-					Delete {playlistName}?
+					Remove {title}?
 				</div>
 				<div className='modal-body'>
-					Are you sure you want to delete the <strong>{playlistName}</strong> playlist?
+					Are you sure you want to permanently remove <strong>{title}</strong>&nbsp;
+					from the playlist?
 				</div>
 				<div className='modal-footer'>
 					<Button
 						variant="contained"
 						className="modal-button"
-						onClick={handleConfirmDeletePlaylist}
+						onClick={handleConfirmRemoveSong}
 					>
 						Confirm
 					</Button>
@@ -42,7 +43,7 @@ function DeletePlaylistModal() {
 						variant="contained"
 						type="button"
 						className="modal-button"
-						onClick={handleCancelDeletePlaylist}
+						onClick={handleCancelRemoveSong}
 					>
 						Cancel
 					</Button>
@@ -52,4 +53,4 @@ function DeletePlaylistModal() {
 	);
 }
 
-export default DeletePlaylistModal;
+export default RemoveSongModal;

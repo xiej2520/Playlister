@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { StoreContext, StoreAPICreator, ModalType } from "../store";
+import { StoreContext, StoreAPICreator, ModalType } from "../../store";
 import Modal from '@mui/material/Modal';
 import { Box, Button } from "@mui/material";
 
