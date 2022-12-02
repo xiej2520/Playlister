@@ -7,7 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IPlaylistExport } from '../store/playlist-model';
 import { Box, Button, Grid, IconButton, TextField } from '@mui/material';
-import { ThumbUp, ThumbDown } from '@mui/icons-material';
+import { ThumbUp, ThumbDown, ThumbUpOffAlt, ThumbDownOffAlt } from '@mui/icons-material';
 import SongCard from './SongCard';
 import { StoreContext, StoreAPICreator, StoreActionType } from '../store';
 import { EditToolbar } from '.';
@@ -43,6 +43,14 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 	function handleUpdateText(event: React.ChangeEvent<HTMLInputElement>) {
 		setText(event.target.value);
 	}
+	function handleToggleLikePlaylist(event: React.MouseEvent<HTMLButtonElement>) {
+		event.stopPropagation();
+		StoreAPI.likePlaylist(playlist);
+	}
+	function handleToggleDislikePlaylist(event: React.MouseEvent<HTMLButtonElement>) {
+		event.stopPropagation();
+		StoreAPI.dislikePlaylist(playlist);
+	}
 
 	const published = playlist.publishDate !== null;
 	const publishDate = published ? 
@@ -60,8 +68,9 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				aria-label='like'
 				aria-haspopup="true"
 				color="inherit"
+				onClick={handleToggleLikePlaylist}
 			>
-				<ThumbUp/>
+				{ playlist.liked ? <ThumbUp/> : <ThumbUpOffAlt/> }
 			</IconButton>&nbsp;&nbsp;&nbsp;
 			{playlist.likeCount}
 		</Grid>
@@ -76,8 +85,9 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				aria-label='dislike'
 				aria-haspopup="true"
 				color="inherit"
+				onClick={handleToggleDislikePlaylist}
 			>
-				<ThumbDown/>
+				{ playlist.disliked ? <ThumbDown/> : <ThumbDownOffAlt/> }
 			</IconButton>&nbsp;&nbsp;&nbsp;
 			{playlist.dislikeCount}
 		</Grid>

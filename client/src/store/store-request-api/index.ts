@@ -16,6 +16,12 @@ export const updatePlaylistById = (playlist: IPlaylistExport) => {
 		playlist: playlist
 	});
 };
+export const setPlaylistLike = (id: string, like: boolean) => api.put(`/playlist/like/${id}`, {
+	like: like
+});
+export const setPlaylistDislike = (id: string, dislike: boolean) => api.put(`/playlist/dislike/${id}`, {
+	dislike: dislike
+});
 
 const apis = {
 	createPlaylist,
@@ -24,6 +30,8 @@ const apis = {
 	getPublishedPlaylists,
 	getUserPlaylists,
 	publishPlaylistById,
+	setPlaylistLike,
+	setPlaylistDislike,
 	updatePlaylistById
 }
 

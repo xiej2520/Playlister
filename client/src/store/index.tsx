@@ -198,6 +198,14 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			console.log('Error: tried to delete playlist without open modal.');
 		}
 	},
+	likePlaylist: async function(playlist: IPlaylistExport) {
+		await api.setPlaylistLike(playlist._id, !playlist.liked);
+		this.getUserPlaylists();
+	},
+	dislikePlaylist: async function(playlist: IPlaylistExport) {
+		await api.setPlaylistDislike(playlist._id, !playlist.disliked);
+		this.getUserPlaylists();
+	},
 	closeModal: function() {
 		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
 			modal: { type: ModalType.NONE }} }

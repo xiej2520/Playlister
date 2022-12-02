@@ -19,3 +19,17 @@ export interface IUpdatePlaylistRequest extends Request {
 		playlist: IPlaylist;
 	};
 }
+
+export interface ILikePlaylistRequest extends Request {
+	userId: string;
+	body: {
+		like: boolean;
+	}
+}
+
+export interface IDislikePlaylistRequest extends Request {
+	userId: string;
+	body: {
+		dislike: boolean;
+	}
+}

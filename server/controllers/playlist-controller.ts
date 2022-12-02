@@ -2,14 +2,15 @@ export { };
 
 import * as express from 'express';
 import { Response } from 'express';
-import { CallbackError } from 'mongoose';
+import { CallbackError, ObjectId } from 'mongoose';
 import { IPlaylist, IPlaylistExport } from '../models/playlist-model';
 import Playlist from '../models/playlist-model';
 import { IUser, UserSchema, User } from '../models/user-model';
-import { ICreatePlaylistRequest, IDeletePlaylistRequest, IGetPlaylistsRequest, IUpdatePlaylistRequest } from './requests/playlist-requests';
+import { ICreatePlaylistRequest, IDeletePlaylistRequest, IGetPlaylistsRequest,
+	IUpdatePlaylistRequest, ILikePlaylistRequest, IDislikePlaylistRequest } from './requests/playlist-requests';
 import auth from '../auth';
 
-function exportPlaylist(playlist: IPlaylist): IPlaylistExport {
+function exportPlaylist(userId: String, playlist: IPlaylist): IPlaylistExport {
 	return {
 		_id: playlist._id,
 		name: playlist.name,
@@ -17,7 +18,9 @@ function exportPlaylist(playlist: IPlaylist): IPlaylistExport {
 		songs: playlist.songs,
 		publishDate: playlist.publishDate,
 		listens: playlist.listens,
+		liked: playlist.likes.has(userId),
 		likeCount: playlist.likeCount,
+		disliked: playlist.dislikes.has(userId),
 		dislikeCount: playlist.dislikeCount
 	}
 }
@@ -65,7 +68,7 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: Response) => {
 					.save()
 					.then(() => {
 						return res.status(201).json({
-							playlist: exportPlaylist(playlist)
+							playlist: exportPlaylist(user.id, playlist)
 						});
 					})
 					.catch((err) => {
@@ -127,7 +130,7 @@ const duplicatePlaylist = (req: ICreatePlaylistRequest, res: Response) => {
 							.save()
 							.then(() => {
 								return res.status(201).json({
-									playlist: exportPlaylist(dupePlaylist)
+									playlist: exportPlaylist(user.id, dupePlaylist)
 								});
 							})
 					});
@@ -168,7 +171,7 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 	}
 	Playlist
 		.find({ id: req.userId })
-		.select('name ownerName songs publishDate listens likeCount dislikeCount')
+		//.select('name ownerName songs publishDate listens likeCount dislikeCount')
 		.exec()
 		.then((playlists: IPlaylist[]) => {
 			if (!playlists.length) {
@@ -176,7 +179,9 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 					.status(404)
 					.json({ error: 'Playlists not found.' });
 			}
-			return res.status(200).json({ playlists: playlists });
+			return res.status(200).json({ playlists: playlists.map(
+				(playlist) => exportPlaylist(req.userId, playlist))
+			});
 		})
 		.catch((err) => {
 			console.log(err);
@@ -257,11 +262,104 @@ const updatePlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 		})
 }
 
+const likePlaylist = async(req: ILikePlaylistRequest, res: Response) => {
+	if (auth.verifyUser(req) === null) {
+		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
+	}
+	if (!req.body) {
+		return res.status(400).json({
+			error: 'Invalid body for like playlist request.'
+		});
+	}
+	Playlist
+		.findById(req.params.id)
+		.then((playlist: IPlaylist | null) => {
+			if (playlist === null) {
+				return res.status(404).json({ errorMessage: 'Playlist not found!' });
+			}
+			if (playlist.publishDate === null) {
+				return res.status(400).json({ errorMessage: 'Playlist cannot be liked!' });
+			}
+			if (req.body.like === true) {
+				if (!playlist.likes.has(req.userId)) {
+					if (playlist.dislikes.has(req.userId)) {
+						playlist.dislikes.delete(req.userId);
+						playlist.dislikeCount--;
+					}
+					playlist.likes.set(req.userId, true);
+					playlist.likeCount++;
+				}
+			}
+			else {
+				if (playlist.likes.has(req.userId)) {
+					playlist.likes.delete(req.userId);
+					playlist.likeCount--;
+				}
+			}
+			playlist
+				.save()
+				.then(() => {
+					return res.status(200).json({ body: 'Playlist sucessfully liked!' });
+				});
+		})
+		.catch((error: CallbackError) => {
+			console.log(error);
+			return res.status(400).json({ body: 'Playlist not liked!' });
+		})
+}
+
+const dislikePlaylist = async(req: IDislikePlaylistRequest, res: Response) => {
+	if (auth.verifyUser(req) === null) {
+		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
+	}
+	if (!req.body) {
+		return res.status(400).json({
+			error: 'Invalid body for dislike playlist request.'
+		});
+	}
+	Playlist
+		.findById(req.params.id)
+		.then((playlist: IPlaylist | null) => {
+			if (playlist === null) {
+				return res.status(404).json({ errorMessage: 'Playlist not found!' });
+			}
+			if (playlist.publishDate === null) {
+				return res.status(400).json({ errorMessage: 'Playlist cannot be disliked!' });
+			}
+			if (req.body.dislike === true) {
+				if (!playlist.dislikes.has(req.userId)) {
+					if (playlist.likes.has(req.userId)) {
+						playlist.likes.delete(req.userId);
+						playlist.likeCount--;
+					}
+					playlist.dislikes.set(req.userId, true);
+					playlist.dislikeCount++;
+				}
+			}
+			else {
+				if (playlist.dislikes.has(req.userId)) {
+					playlist.dislikes.delete(req.userId);
+					playlist.dislikeCount--;
+				}
+			}
+			playlist
+				.save()
+				.then(() => {
+					return res.status(200).json({ body: 'Playlist sucessfully disliked!' });
+				});
+		})
+		.catch((error: CallbackError) => {
+			console.log(error);
+			return res.status(400).json({ body: 'Playlist not disliked!' });
+		})
+}
 const PlaylistController = {
 	createPlaylist,
 	duplicatePlaylist,
 	deletePlaylist,
 	getUserPlaylists,
+	likePlaylist,
+	dislikePlaylist,
 	publishPlaylist,
 	updatePlaylist
 }

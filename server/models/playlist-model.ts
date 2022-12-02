@@ -28,7 +28,9 @@ export interface IPlaylistExport {
 	songs: ISong[];
 	publishDate: Date | null;
 	listens: number;
+	liked: boolean;
 	likeCount: number;
+	disliked: boolean;
 	dislikeCount: number;
 };
 
