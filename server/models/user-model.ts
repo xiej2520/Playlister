@@ -11,7 +11,6 @@ export interface IUser extends Document {
 	email: string;
 	passwordHash: string;
 	playlists: Types.ObjectId[];
-	playlistCount: number;
 };
 
 export const UserSchema = new Schema<IUser>(
@@ -22,7 +21,6 @@ export const UserSchema = new Schema<IUser>(
 		email: { type: String, required: true },
 		passwordHash: { type: String, required: true },
 		playlists: [{ type: ObjectId, ref: 'Playlist' }],
-		playlistCount: { type: Number, required: true }
 	},
 	{ timestamps: true}
 );

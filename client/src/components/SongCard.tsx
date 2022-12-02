@@ -1,13 +1,12 @@
 import { Box, Button } from "@mui/material";
 import { useContext, useState } from "react";
-import { AuthAPICreator } from "../auth";
 import { StoreContext, StoreAPICreator } from "../store";
 import { ISong } from "../store/playlist-model";
 
-function SongCard(props: { song: ISong, index: number}) {
+function SongCard(props: { song: ISong, index: number, published: boolean }) {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
-	const { song, index } = props;
+	const { song, index, published } = props;
 	const [draggedTo, setDraggedTo] = useState(false);
 
 	function handleDragStart(event: React.DragEvent<HTMLElement>) {
@@ -51,7 +50,7 @@ function SongCard(props: { song: ISong, index: number}) {
 				margin: '4px',
 				padding: '8px'
 			}}
-			draggable='true'
+			draggable={published ? 'false' : 'true'}
 			/*
 			className={cardClass}
 			*/
@@ -60,7 +59,7 @@ function SongCard(props: { song: ISong, index: number}) {
 			onDragEnter={handleDragEnter}
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}
-			onClick={handleClick}
+			onClick={published ? () => {} : handleClick}
 		>
 			{index + 1}.&nbsp;
 			<a
@@ -70,6 +69,7 @@ function SongCard(props: { song: ISong, index: number}) {
 				{song.title} by {song.artist}
 			</a>
 			<Box sx={{ flexGrow: 1 }}/>
+			{published ? <></> :
 			<Button
 				variant="contained"
 				id={"remove-song-" + index}
@@ -78,6 +78,7 @@ function SongCard(props: { song: ISong, index: number}) {
 			>
 			&#x2715;
 			</Button>
+			}
 		</Box>
 	);
 }

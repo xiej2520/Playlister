@@ -12,47 +12,52 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: express.Response
 	if (auth.verifyUser(req) === null) {
 		return res.status(401).json({ errorMessage: 'Unauthorized request.' })
 	}
-	const body = req.body;
-
-	if (!body) {
-		return res.status(400).json({
-			success: false,
-			error: 'You must provide a Playlist',
-		})
-	}
-
-	User.findOne({ _id: req.userId }, (err: CallbackError, user: IUser) => {
-		if (user === null) {
-			return res.status(400).send("User could not be found.");
-		}
-		const playlist = new Playlist({
-			...body,
-			ownerName: user.firstName + " " + user.lastName,
-			ownerId: user._id,
-			publishDate: null,
-			listens: 0,
-			likeCount: 0,
-			likes: new Map(),
-			dislikeCount: 0,
-			dislikes: new Map()
-		});
-		user.playlists.push(playlist._id);
-		user
-			.save()
-			.then(() => {
+	User
+		.findOne({ _id: req.userId })
+		.then(async (user: IUser | null) =>  {
+			if (user === null) {
+				return res.status(400).send("User could not be found.");
+			}
+			let i = 0;
+			let found = false;
+			while (!found) {
+				await Playlist
+					.findOne({ name: `Untitled Playlist ${i}`})
+					.then((playlist: IPlaylist | null) => {
+						if (playlist === null) {
+							found = true;
+						}
+						else {
+							i++;
+						}
+					})
+					.catch((err: CallbackError) => console.log(err));
+			}
+			const playlist = new Playlist({
+				name: `Untitled Playlist ${i}`,
+				ownerUsername: user.username,
+				ownerId: user._id,
+				publishDate: null,
+				listens: 0,
+				likeCount: 0,
+				likes: new Map(),
+				dislikeCount: 0,
+				dislikes: new Map()
+			});
+			user.playlists.push(playlist._id);
+			user.save().then(() => {
 				playlist
 					.save()
 					.then(() => {
-						const playlistExport = {
-							_id: playlist._id,
-							name: playlist.name,
-							ownerName: playlist.ownerName,
-							songs: playlist.songs,
-							likeCount: playlist.likeCount,
-							dislikeCount: playlist.dislikeCount
-						};
 						return res.status(201).json({
-							playlist: playlistExport
+							playlist: {
+								_id: playlist._id,
+								name: playlist.name,
+								ownerUsername: playlist.ownerUsername,
+								songs: playlist.songs,
+								likeCount: playlist.likeCount,
+								dislikeCount: playlist.dislikeCount
+							}
 						})
 					})
 					.catch((err) => {
@@ -60,7 +65,7 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: express.Response
 						return res.status(400).json({
 							errorMessage: 'Playlist not created!'
 						});
-					})
+					});
 			});
 	});
 }

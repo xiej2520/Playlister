@@ -10,7 +10,6 @@ function AuthErrorModal() {
 	function handleDismissModal() {
 		AuthAPI.setErrorMessage(null);
 	}
-	console.log(auth.errorMsg);
 
 	return (
 		<Modal open={auth.errorMsg !== null}>

@@ -5,10 +5,6 @@ import { IPlaylist, ISong } from '../../models/playlist-model';
 
 export interface ICreatePlaylistRequest extends Request {
 	userId: string;
-	body: {
-		name: string;
-		songs: ISong[];
-	}
 };
 export interface IDeletePlaylistRequest extends Request {
 	userId: string;

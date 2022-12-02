@@ -94,7 +94,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls="panel1bh-content"
 				id="panel1bh-header"
-				sx={{ bgcolor: 'grey.900', position: 'sticky', top: '0', zIndex: 100 }}
+				sx={{ bgcolor: published ? 'grey.800' : 'grey.900', position: 'sticky', top: '0', zIndex: 100 }}
 			>
 				<Grid container>
 					<Grid item xs={8}>
@@ -125,7 +125,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 						sx={{flexDirection: 'column', justifyContent: 'center'}}
 					>
 						<Typography sx={{ color: 'text.secondary', width: '50%' }}>
-							By: {playlist.ownerName}
+							By: {playlist.ownerUsername}
 						</Typography>
 					</Grid>
 				{publishedFields}
@@ -141,6 +141,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 							key={index}
 							index={index}
 							song={song}
+							published={published}
 						/>
 					))
 				}

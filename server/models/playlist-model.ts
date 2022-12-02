@@ -10,7 +10,7 @@ export interface ISong {
 
 export interface IPlaylist extends Document {
 	name: string;
-	ownerName: string;
+	ownerUsername: string;
 	ownerId: string;
 	songs: ISong[];
 	publishDate: Date | null;
@@ -24,7 +24,7 @@ export interface IPlaylist extends Document {
 export const PlaylistSchema = new Schema<IPlaylist>(
 	{
 		name: { type: String, required: true },
-		ownerName: { type: String, required: true },
+		ownerUsername: { type: String, required: true },
 		ownerId: { type: String, required: true },
 		songs: {
 			type: [{

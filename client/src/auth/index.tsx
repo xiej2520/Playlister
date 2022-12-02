@@ -75,7 +75,6 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
 				};
 			}
 			case AuthActionType.SET_ERROR_MESSAGE: {
-				console.log(payload.errorMsg)
 				return {
 					...auth,
 					errorMsg: payload.errorMsg
@@ -125,7 +124,6 @@ export const AuthAPICreator = (authDispatch: Dispatch<AuthAction>) => ({
 			return false;
 		}
 		catch (err: any) {
-			console.log(err.response.data.errorMessage);
 			authDispatch({
 				type: AuthActionType.SET_ERROR_MESSAGE,
 				payload: { errorMsg: err.response.data.errorMessage }

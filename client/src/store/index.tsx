@@ -6,7 +6,6 @@ import CreateSongTransaction from './transactions/CreateSongTransaction';
 import RemoveSongTransaction from './transactions/RemoveSongTransaction';
 import EditSongTransaction from './transactions/EditSongTransaction';
 import MoveSongTransaction from './transactions/MoveSongTransaction';
-import { Modal } from '@mui/material';
 
 const tps = new tsTPS();
 
@@ -133,8 +132,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	createPlaylist: async function() {
 		try {
-			const response = await api.createPlaylist(
-				'Untitled Playlist', [], '');
+			const response = await api.createPlaylist();
 			this.getUserPlaylists();
 		}
 		catch (err) {
@@ -143,9 +141,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	duplicatePlaylist: async function(playlist: IPlaylistExport) {
 		try {
-			const response = await api.createPlaylist(
-				playlist.name + '(Copy)', playlist.songs, ''
-			);
+			const response = await api.duplicatePlaylist(playlist);
 			this.getUserPlaylists();
 		}
 		catch (err) {

@@ -7,7 +7,7 @@ export interface ISong {
 export interface IPlaylistExport {
 	_id: string;
 	name: string;
-	ownerName: string;
+	ownerUsername: string;
 	ownerId: string;
 	songs: ISong[];
 	publishDate: Date | null;
