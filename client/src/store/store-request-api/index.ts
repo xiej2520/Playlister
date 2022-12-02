@@ -6,9 +6,7 @@ const api = axios.create({
 })
 
 export const createPlaylist = () => { return api.post(`/playlist/`) };
-export const duplicatePlaylist = (playlist: IPlaylistExport) => { return api.post(`/duplicateplaylist/`),
-	{ playlist: playlist }
-};
+export const duplicatePlaylist = (id: string) => { return api.post(`/duplicateplaylist/${id}`) };
 export const getPublishedPlaylists = () => api.get(`/publishedplaylists/`);
 export const getUserPlaylists = () => api.get(`/userplaylists/`);
 export const deletePlaylistById = (id: string) => api.delete(`/playlist/${id}`);

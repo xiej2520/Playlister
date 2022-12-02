@@ -1,6 +1,6 @@
 export {};
 
-import { Schema, Model, Document, model } from 'mongoose';
+import { Schema, Model, Document, model, ObjectId } from 'mongoose';
 
 export interface ISong {
 	title: string;
@@ -19,6 +19,17 @@ export interface IPlaylist extends Document {
 	likes: Map<String, boolean>;
 	dislikeCount: number;
 	dislikes: Map<String, boolean>;
+};
+
+export interface IPlaylistExport {
+	_id: ObjectId;
+	name: string;
+	ownerUsername: string;
+	songs: ISong[];
+	publishDate: Date | null;
+	listens: number;
+	likeCount: number;
+	dislikeCount: number;
 };
 
 export const PlaylistSchema = new Schema<IPlaylist>(

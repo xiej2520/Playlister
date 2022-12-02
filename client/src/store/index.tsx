@@ -141,7 +141,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	duplicatePlaylist: async function(playlist: IPlaylistExport) {
 		try {
-			const response = await api.duplicatePlaylist(playlist);
+			const response = await api.duplicatePlaylist(playlist._id);
 			this.getUserPlaylists();
 		}
 		catch (err) {
