@@ -189,6 +189,27 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 		});
 }
 
+const getPublishedPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
+	// allow guests to get published playlists
+	Playlist
+		.find({ publishDate: { $ne: null } })
+		.exec()
+		.then((playlists: IPlaylist[]) => {
+			if (!playlists.length) {
+				return res
+					.status(404)
+					.json({ error: 'Playlists not found.' });
+			}
+			return res.status(200).json({ playlists: playlists.map(
+				(playlist) => exportPlaylist(req.userId, playlist))
+			});
+		})
+		.catch((err) => {
+			console.log(err);
+			return res.status(400).json({ error: err });
+		});
+}
+
 const publishPlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 	if (auth.verifyUser(req) === null) {
 		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
@@ -358,6 +379,7 @@ const PlaylistController = {
 	duplicatePlaylist,
 	deletePlaylist,
 	getUserPlaylists,
+	getPublishedPlaylists,
 	likePlaylist,
 	dislikePlaylist,
 	publishPlaylist,

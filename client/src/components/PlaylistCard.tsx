@@ -54,7 +54,9 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 
 	const published = playlist.publishDate !== null;
 	const publishDate = published ? 
-	new Date(playlist.publishDate!).toLocaleString().split(',')[0] : '';
+	new Date(playlist.publishDate!).toLocaleString('en-US', {
+		month: 'short', day: '2-digit', year: 'numeric'
+	}) : '';
 	const publishedFields = published ?
 		<>
 		<Grid item xs={8}

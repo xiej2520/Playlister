@@ -2,17 +2,21 @@ import { Box, AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Button } 
 import { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext, AuthAPICreator } from '../auth';
-import store from '../store';
+import { CurrentScreen, StoreActionType, StoreAPICreator, StoreContext } from '../store';
+
 import SearchBar from './SearchBar';
 
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import People from '@mui/icons-material/Group';
-import Person from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupsIcon from '@mui/icons-material/Groups';
 import Sort from '@mui/icons-material/Sort';
 
 export default function AppBanner() {
 	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
 	const AuthAPI = AuthAPICreator(authDispatch);
+	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
+	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -23,25 +27,38 @@ export default function AppBanner() {
 	const [sortAnchorEl, setSortAnchorEl] = useState<HTMLElement | null>(null);
 	const isSortMenuOpen = Boolean(sortAnchorEl);
 
-	const handleProfileMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+	function handleProfileMenuOpen(event: React.MouseEvent<HTMLButtonElement>) {
 		setProfileAnchorEl(event.currentTarget);
 	}
-	const handleSortMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+	function handleSortMenuOpen(event: React.MouseEvent<HTMLButtonElement>) {
 		setSortAnchorEl(event.currentTarget);
 	}
 
-	const handleProfileMenuClose = () => {
+	function handleProfileMenuClose() {
 		setProfileAnchorEl(null);
 	}
-	const handleSortMenuClose = () => {
+	function handleSortMenuClose() {
 		setSortAnchorEl(null);
 	}
 	
-	const handleLogout = () => {
+	function handleLogout() {
 		handleProfileMenuClose();
 		AuthAPI.logoutUser();
 		navigate('/');
 	}
+
+	function handleLoadScreen(screen: CurrentScreen) {
+		if (auth.user === null && screen === CurrentScreen.HOME) {
+			navigate('/');
+			storeDispatch({ type: StoreActionType.LOAD_SCREEN, payload: {
+				currentScreen: CurrentScreen.NONE
+			}});
+		}
+		storeDispatch({ type: StoreActionType.LOAD_SCREEN, payload: {
+			currentScreen: screen
+		}});
+	}
+
 	const menuId = 'primary-search-account-menu';
 	const loggedOutMenu = (
 		<Menu
@@ -102,29 +119,34 @@ export default function AppBanner() {
 						component="div"
 						sx={{ display: { xs: 'none', sm: 'block' } }}
 					>
-						<Link style={{ textDecoration: 'none', color: 'white' }} to='/'
-							onClick={() => {}/*store.clearTPS*/}>⌂</Link>
+						<IconButton
+							size='large'
+							aria-label='home'
+							onClick={() => { handleLoadScreen(CurrentScreen.HOME) }}
+						>
+							<HomeIcon/>
+						</IconButton>
 					</Typography>
 						{isOnHome ? <>
 							<IconButton
 								size="large"
-								edge="end"
 								aria-label="account of current user"
 								aria-controls={menuId}
 								aria-haspopup="true"
 								color="inherit"
+								onClick={() => { handleLoadScreen(CurrentScreen.ALL_LISTS) }}
 							>
-								<Person/>
+								<GroupsIcon/>
 							</IconButton>
 							<IconButton
 								size="large"
-								edge="end"
 								aria-label="account of current user"
 								aria-controls={menuId}
 								aria-haspopup="true"
 								color="inherit"
+								onClick={() => { handleLoadScreen(CurrentScreen.USER_LISTS) }}
 							>
-								<People/>
+								<PersonIcon/>
 							</IconButton>
 							
 							<Box sx={{ flexGrow: 1}}/>

@@ -6,6 +6,7 @@ const router = express.Router();
 import auth from '../auth';
 
 router.get('/userplaylists', auth.verify, PlaylistController.getUserPlaylists);
+router.get('/publishedplaylists', PlaylistController.getPublishedPlaylists);
 router.post('/playlist', auth.verify, PlaylistController.createPlaylist);
 router.delete('/playlist/:id', auth.verify, PlaylistController.deletePlaylist);
 router.post('/duplicateplaylist/:id', auth.verify, PlaylistController.duplicatePlaylist);
@@ -13,10 +14,5 @@ router.put('/playlist/publish/:id', auth.verify, PlaylistController.publishPlayl
 router.put('/playlist/:id', auth.verify, PlaylistController.updatePlaylist);
 router.put('/playlist/like/:id', auth.verify, PlaylistController.likePlaylist);
 router.put('/playlist/dislike/:id', auth.verify, PlaylistController.dislikePlaylist);
-/*
-router.get('/playlist/:id', auth.verify, PlaylistController.getPlaylistById);
-router.get('/playlistpairs', auth.verify, PlaylistController.getPlaylistPairs);
-router.get('/playlists', auth.verify, PlaylistController.getPlaylists);
-*/
 
 module.exports = router;

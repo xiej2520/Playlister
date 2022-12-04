@@ -112,10 +112,12 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 }
 
 export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<StoreAction>) => ({
+	unloadPlaylists: function() {
+		storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: { playlists: []}});
+	},
 	getUserPlaylists: async function()  {
 		try {
 			const response = await api.getUserPlaylists();
-			console.log('loading playlists')
 			if (response.status === 200) {
 				storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: {
 					playlists: response.data.playlists
@@ -124,6 +126,26 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		}
 		catch (err) {
 			console.log('Error encountered in getUserPlaylists.');
+		}
+	},
+	getPublishedPlaylists: async function(text: string) {
+		try {
+			const response = await api.getPublishedPlaylists();
+			if (response.status === 200) {
+				let playlists: IPlaylistExport[] = response.data.playlists;
+				if (store.currentScreen === CurrentScreen.ALL_LISTS) {
+					playlists = playlists.filter(p => p.name.includes(text));
+				}
+				else if (store.currentScreen === CurrentScreen.USER_LISTS) {
+					playlists = playlists.filter(p => p.ownerUsername.includes(text));
+				}
+				storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: {
+					playlists: playlists
+				}});
+			}
+		}
+		catch (err) {
+			console.log('Error encountered in getPublishedPlaylists');
 		}
 	},
 	setOpenPlaylist: function(playlist: IPlaylistExport | null) {
