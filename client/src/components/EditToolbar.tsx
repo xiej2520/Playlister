@@ -5,10 +5,13 @@ import RedoIcon from '@mui/icons-material/Redo';
 import { useContext } from "react";
 import { StoreContext, StoreAPICreator } from "../store";
 import IPlaylistExport from "../store/playlist-model";
+import { AuthContext, AuthAPICreator } from "../auth";
 
 
 function EditToolbar(props: { playlist: IPlaylistExport }) {
 	const { playlist } = props;
+	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
+	const AuthAPI = AuthAPICreator(authDispatch);
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
@@ -38,6 +41,10 @@ function EditToolbar(props: { playlist: IPlaylistExport }) {
 
 	const isExpanded = store.openPlaylist !== null && store.openPlaylist._id === playlist._id;
 	const published = playlist.publishDate !== null;
+
+	if (auth.user === null) {
+		return null;
+	}
 	return (
 		isExpanded ?
 			<Grid item xs={12}
@@ -70,7 +77,7 @@ function EditToolbar(props: { playlist: IPlaylistExport }) {
 					<RedoIcon/>
 				</Button>
 				<Button
-					disabled={published}
+					disabled={published || playlist.ownerUsername !==  auth.user.username}
 					onClick={handlePublish}
 					variant='contained'
 				>

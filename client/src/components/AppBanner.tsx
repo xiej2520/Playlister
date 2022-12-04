@@ -44,10 +44,12 @@ export default function AppBanner() {
 	function handleLogout() {
 		handleProfileMenuClose();
 		AuthAPI.logoutUser();
+		StoreAPI.unloadPlaylists();
 		navigate('/');
 	}
 
 	function handleLoadScreen(screen: CurrentScreen) {
+		StoreAPI.unloadPlaylists();
 		if (auth.user === null && screen === CurrentScreen.HOME) {
 			navigate('/');
 			storeDispatch({ type: StoreActionType.LOAD_SCREEN, payload: {

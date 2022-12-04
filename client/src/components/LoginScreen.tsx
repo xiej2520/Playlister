@@ -15,10 +15,12 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router';
+import { StoreActionType, CurrentScreen, StoreContext } from '../store';
 
 export default function LoginScreen() {
 	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
 	const AuthAPI = AuthAPICreator(authDispatch);
+	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const navigate = useNavigate();
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -28,12 +30,11 @@ export default function LoginScreen() {
 		let password = (formElements.namedItem('password') as HTMLInputElement).value;
 		if (await AuthAPI.loginUser(email, password)) {
 			navigate('/home');
+			storeDispatch({ type: StoreActionType.LOAD_SCREEN, payload: {
+				currentScreen: CurrentScreen.HOME
+			}});
 		}
 	};
-	let modalJSX = null;
-	if (auth.errorMsg !== null) {
-		//modalJSX = <MUIAccountError />
-	}
 
 	return (
 		<Grid container component='main' sx={{ height: '75vh' }}>
@@ -113,7 +114,6 @@ export default function LoginScreen() {
 					</Box>
 				</Box>
 			</Grid>
-			{modalJSX}
 		</Grid>
 	);
 }

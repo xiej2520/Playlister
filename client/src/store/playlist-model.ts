@@ -4,11 +4,15 @@ export interface ISong {
 	youTubeId: string;
 }
 
+export interface IComment {
+	text: string;
+	ownerUsername: string;
+}
+
 export interface IPlaylistExport {
 	_id: string;
 	name: string;
 	ownerUsername: string;
-	ownerId: string;
 	songs: ISong[];
 	publishDate: Date | null;
 	listens: number;
@@ -16,6 +20,7 @@ export interface IPlaylistExport {
 	likeCount: number;
 	disliked: boolean;
 	dislikeCount: number;
+	comments: IComment[];
 };
 
 export default IPlaylistExport;

@@ -1,6 +1,5 @@
 export { };
 
-import * as express from 'express';
 import { Response } from 'express';
 import { CallbackError, ObjectId } from 'mongoose';
 import { IPlaylist, IPlaylistExport } from '../models/playlist-model';
@@ -9,6 +8,7 @@ import { IUser, UserSchema, User } from '../models/user-model';
 import { ICreatePlaylistRequest, IDeletePlaylistRequest, IGetPlaylistsRequest,
 	IUpdatePlaylistRequest, ILikePlaylistRequest, IDislikePlaylistRequest } from './requests/playlist-requests';
 import auth from '../auth';
+const jwt = require('jsonwebtoken'); // only needed for getPublishedPlaylists
 
 function exportPlaylist(userId: String, playlist: IPlaylist): IPlaylistExport {
 	return {
@@ -21,7 +21,8 @@ function exportPlaylist(userId: String, playlist: IPlaylist): IPlaylistExport {
 		liked: playlist.likes.has(userId),
 		likeCount: playlist.likeCount,
 		disliked: playlist.dislikes.has(userId),
-		dislikeCount: playlist.dislikeCount
+		dislikeCount: playlist.dislikeCount,
+		comments: playlist.comments
 	}
 }
 
@@ -170,7 +171,7 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 		return res.status(401).json({ errorMessage: 'Unauthorized access.' });
 	}
 	Playlist
-		.find({ id: req.userId })
+		.find({ ownerId: req.userId })
 		//.select('name ownerName songs publishDate listens likeCount dislikeCount')
 		.exec()
 		.then((playlists: IPlaylist[]) => {
@@ -190,7 +191,14 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 }
 
 const getPublishedPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
+	const token = req.cookies.token;
+	if (token !== null && token !== undefined) {
+		console.log(token)
+		const verified = jwt.verify(token, process.env.JWT_SECRET);
+		req.userId = verified.userId;
+	}
 	// allow guests to get published playlists
+	// must be verified to get likes/dislikes
 	Playlist
 		.find({ publishDate: { $ne: null } })
 		.exec()

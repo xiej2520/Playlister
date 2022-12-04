@@ -1,16 +1,15 @@
 import api from './auth-request-api'
 import React, { createContext, Dispatch, useReducer } from 'react';
 
-interface User {
+interface IUser {
 	firstName: String;
 	lastName: String;
+	username: String;
 	email: String;
-	passwordHash: String;
-	playlists: String;
 };
 
 type AuthState = {
-	user: User | null;
+	user: IUser | null;
 	loggedIn: boolean;
 	errorMsg: String | null;
 };
@@ -30,10 +29,10 @@ export const enum AuthActionType {
 };
 
 type AuthAction =
-	| { type: AuthActionType.GET_LOGGED_IN, payload: { user: User, loggedIn: boolean} }
-	| { type: AuthActionType.LOGIN_USER, payload: { user: User } }
+	| { type: AuthActionType.GET_LOGGED_IN, payload: { user: IUser, loggedIn: boolean} }
+	| { type: AuthActionType.LOGIN_USER, payload: { user: IUser } }
 	| { type: AuthActionType.LOGOUT_USER, payload: {} }
-	| { type: AuthActionType.REGISTER_USER, payload: { user: User }
+	| { type: AuthActionType.REGISTER_USER, payload: { user: IUser }
 	}
 	| { type: AuthActionType.SET_ERROR_MESSAGE, payload: { errorMsg: string | null } }
 

@@ -11,7 +11,6 @@ import PublishPlaylistModal from './modals/PublishPlaylistModal';
 function HomeScreen() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
-
 	useEffect(() => {
 		if (store.currentScreen === CurrentScreen.HOME) {
 			StoreAPI.getUserPlaylists();

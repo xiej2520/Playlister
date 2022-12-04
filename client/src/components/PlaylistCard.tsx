@@ -6,14 +6,16 @@ import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IPlaylistExport } from '../store/playlist-model';
-import { Box, Button, Grid, IconButton, TextField } from '@mui/material';
+import { Grid, IconButton, TextField } from '@mui/material';
 import { ThumbUp, ThumbDown, ThumbUpOffAlt, ThumbDownOffAlt } from '@mui/icons-material';
 import SongCard from './SongCard';
-import { StoreContext, StoreAPICreator, StoreActionType } from '../store';
+import { AuthContext } from '../auth';
+import { StoreContext, StoreAPICreator } from '../store';
 import { EditToolbar } from '.';
 
 function PlaylistCard(props: { playlist: IPlaylistExport }) {
 	const { playlist } = props;
+	const { state: auth, dispatch: authDispatch } = useContext(AuthContext);
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
@@ -57,6 +59,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 	new Date(playlist.publishDate!).toLocaleString('en-US', {
 		month: 'short', day: '2-digit', year: 'numeric'
 	}) : '';
+	const loggedIn = auth.user !== null;
 	const publishedFields = published ?
 		<>
 		<Grid item xs={8}
@@ -65,6 +68,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		>Published: {publishDate}</Grid>
 		<Grid item xs={4} container alignItems='center' >
 			<IconButton
+				disabled={!loggedIn}
 				size="medium"
 				edge="end"
 				aria-label='like'
@@ -82,6 +86,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		>Listens: {playlist.listens}</Grid>
 		<Grid item xs={4} container alignItems='center' >
 			<IconButton
+				disabled={!loggedIn}
 				size="medium"
 				edge="end"
 				aria-label='dislike'

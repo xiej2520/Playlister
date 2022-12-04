@@ -14,13 +14,7 @@ export const enum StoreActionType {
 	LOAD_PLAYLISTS,
 	SET_OPEN_PLAYLIST,
 	SET_MODAL,
-	CREATE_NEW_LIST,
-	LOAD_ID_NAME_PAIRS,
-	MARK_LIST_FOR_DELETION,
-	SET_LIST_NAME_EDIT_ACTIVE,
-	EDIT_SONG,
-	REMOVE_SONG,
-	HIDE_MODALS
+	SET_SEARCH_TEXT
 };
 
 export const enum CurrentScreen {
@@ -51,13 +45,15 @@ type StoreState = {
 	currentModal: CurrentModal;
 	playlists: IPlaylistExport[];
 	openPlaylist: IPlaylistExport | null;
+	searchText: string;
 };
 
 const defaultStore: StoreState = {
 	currentScreen: CurrentScreen.NONE,
 	currentModal: { type: ModalType.NONE },
 	playlists: [],
-	openPlaylist: null
+	openPlaylist: null,
+	searchText: ''
 };
 
 type StoreAction =
@@ -65,6 +61,7 @@ type StoreAction =
 	| { type: StoreActionType.LOAD_PLAYLISTS, payload: { playlists: IPlaylistExport[] }}
 	| { type: StoreActionType.SET_OPEN_PLAYLIST, payload: { playlist: IPlaylistExport | null }}
 	| { type: StoreActionType.SET_MODAL, payload: { modal: CurrentModal }}
+	| { type: StoreActionType.SET_SEARCH_TEXT, payload: { searchText: string }}
 ;
 
 const storeDefaultDispatch: Dispatch<StoreAction> = () => defaultStore;
@@ -98,6 +95,12 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 				return {
 					...store,
 					currentModal: payload.modal
+				};
+			}
+			case StoreActionType.SET_SEARCH_TEXT: {
+				return {
+					...store,
+					searchText: payload.searchText
 				};
 			}
 			default: return store;
@@ -166,7 +169,12 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	duplicatePlaylist: async function(playlist: IPlaylistExport) {
 		try {
 			const response = await api.duplicatePlaylist(playlist._id);
-			this.getUserPlaylists();
+			if (store.currentScreen === CurrentScreen.HOME) {
+				this.getUserPlaylists();
+			}
+			else {
+				this.getPublishedPlaylists(store.searchText);
+			}
 		}
 		catch (err) {
 			console.log(err);
@@ -232,12 +240,21 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	likePlaylist: async function(playlist: IPlaylistExport) {
 		await api.setPlaylistLike(playlist._id, !playlist.liked);
-		this.getUserPlaylists();
+		if (store.currentScreen === CurrentScreen.HOME) {
+			this.getUserPlaylists();
+		}
+		else {
+			this.getPublishedPlaylists(store.searchText);
+		}
 	},
 	dislikePlaylist: async function(playlist: IPlaylistExport) {
 		await api.setPlaylistDislike(playlist._id, !playlist.disliked);
-		this.getUserPlaylists();
-	},
+		if (store.currentScreen === CurrentScreen.HOME) {
+			this.getUserPlaylists();
+		}
+		else {
+			this.getPublishedPlaylists(store.searchText);
+		}	},
 	closeModal: function() {
 		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
 			modal: { type: ModalType.NONE }} }

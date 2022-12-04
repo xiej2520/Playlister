@@ -7,6 +7,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import YouTube from 'react-youtube';
+import CommentView from './CommentView';
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -81,7 +82,7 @@ export default function YouTubeWrapper() {
 
 			</TabPanel>
 			<TabPanel value={value} index={1} dir={theme.direction}>
-				Item Two
+				<CommentView></CommentView>
 			</TabPanel>
 		</Box>
 	);

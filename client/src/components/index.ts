@@ -11,13 +11,15 @@ import SearchBar from './SearchBar';
 import StatusBar from './StatusBar';
 import WelcomeScreen from './WelcomeScreen';
 import YouTubeWrapper from './YouTubeWrapper';
+import CommentView from './CommentView';
 
 export {
 	AppBanner,
 	AuthErrorModal,
-	HomeWrapper,
+	CommentView,
 	DeletePlaylistModal,
 	EditToolbar,
+	HomeWrapper,
 	LoginScreen,
 	PublishPlaylistModal,
 	RegisterScreen,

@@ -8,6 +8,11 @@ export interface ISong {
 	youTubeId: string;
 }
 
+export interface IComment {
+	text: string;
+	ownerUsername: string;
+}
+
 export interface IPlaylist extends Document {
 	name: string;
 	ownerUsername: string;
@@ -19,6 +24,7 @@ export interface IPlaylist extends Document {
 	likes: Map<String, boolean>;
 	dislikeCount: number;
 	dislikes: Map<String, boolean>;
+	comments: IComment[];
 };
 
 export interface IPlaylistExport {
@@ -32,6 +38,7 @@ export interface IPlaylistExport {
 	likeCount: number;
 	disliked: boolean;
 	dislikeCount: number;
+	comments: IComment[];
 };
 
 export const PlaylistSchema = new Schema<IPlaylist>(
@@ -51,7 +58,8 @@ export const PlaylistSchema = new Schema<IPlaylist>(
 		likeCount: { type: Number, required: true },
 		likes: { type: Map, of: String},
 		dislikeCount: { type: Number, required: true},
-		dislikes: { type: Map, of: String}
+		dislikes: { type: Map, of: String},
+		comments: { type: [{ text: String, ownerUsername: String }], required: true}
 	},
 	{ timestamps: true }
 );
