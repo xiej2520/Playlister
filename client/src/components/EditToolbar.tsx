@@ -84,6 +84,7 @@ function EditToolbar(props: { playlist: IPlaylistExport }) {
 					Publish
 				</Button>
 				<Button
+					disabled={playlist.ownerUsername !==  auth.user.username}
 					onClick={handleDelete}
 					variant='contained'
 				>

@@ -1,18 +1,30 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { StoreAPICreator, StoreContext } from '../store';
+import { CurrentScreen, StoreAPICreator, StoreContext } from '../store';
 
 function StatusBar() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
-	const [openPlaylist, setOpenPlaylist] = useState<string | null>(null);
-	
 	function handleCreatePlaylist() {
 		StoreAPI.createPlaylist();
 	}
-		
+
+	let status = '';
+	switch (store.currentScreen) {
+		case CurrentScreen.HOME:
+			status = 'Your Lists';
+			break;
+		case CurrentScreen.ALL_LISTS:
+			status = `${store.searchText} Playlists`
+			break;
+		case CurrentScreen.USER_LISTS:
+			status = `${store.searchText} Playlists`
+			break;
+		default:
+			return <></>;
+	}
 	return (
 		<Box
 			sx={{
@@ -21,14 +33,17 @@ function StatusBar() {
 				justifyContent: 'center', display: 'flex' 
 			}}
 		>
-		<Button
-			onClick={handleCreatePlaylist}
-			sx={{ bgcolor: 'background.paper'}}
-			variant='contained'
-		>
+		{
+			store.currentScreen === CurrentScreen.HOME ? 
+			<Button
+				onClick={handleCreatePlaylist}
+				sx={{ bgcolor: 'background.paper'}}
+				variant='contained'
+			>
+		
 			<AddIcon/>
-		</Button>&nbsp;
-		STATUS
+		</Button> : <></>}&nbsp;
+			{status}
 		</Box>
 	)
 }
