@@ -6,7 +6,7 @@ import { IPlaylist, IPlaylistExport } from '../models/playlist-model';
 import Playlist from '../models/playlist-model';
 import { IUser, UserSchema, User } from '../models/user-model';
 import { ICreatePlaylistRequest, IDeletePlaylistRequest, IGetPlaylistsRequest,
-	IUpdatePlaylistRequest, ILikePlaylistRequest, IDislikePlaylistRequest } from './requests/playlist-requests';
+	IUpdatePlaylistRequest, ILikePlaylistRequest, IDislikePlaylistRequest, ICommentPlaylistRequest } from './requests/playlist-requests';
 import auth from '../auth';
 const jwt = require('jsonwebtoken'); // only needed for getPublishedPlaylists
 
@@ -193,7 +193,6 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 const getPublishedPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 	const token = req.cookies.token;
 	if (token !== null && token !== undefined) {
-		console.log(token)
 		const verified = jwt.verify(token, process.env.JWT_SECRET);
 		req.userId = verified.userId;
 	}
@@ -382,6 +381,49 @@ const dislikePlaylist = async(req: IDislikePlaylistRequest, res: Response) => {
 			return res.status(400).json({ body: 'Playlist not disliked!' });
 		})
 }
+
+const commentPlaylist = async(req: ICommentPlaylistRequest, res: Response) => {
+	if (auth.verifyUser(req) === null) {
+		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
+	}
+	if (!req.body) {
+		return res.status(400).json({
+			error: 'Invalid body for comment playlist request.'
+		});
+	}
+	Playlist
+		.findById(req.params.id)
+		.then((playlist: IPlaylist | null) => {
+			if (playlist === null) {
+				return res.status(404).json({ errorMessage: 'Playlist not found!' });
+			}
+			if (playlist.publishDate === null) {
+				return res.status(400).json({ errorMessage: 'Playlist cannot be commented on!' });
+			}
+			User
+			.findOne({ _id: req.userId })
+			.then(async (user: IUser | null) => {
+				if (user === null) {
+					return res.status(400).send('User could not be found.');
+				}
+				playlist.comments.push({
+					text: req.body.comment,
+					ownerUsername: user.username
+				});
+				playlist
+				.save()
+				.then(() => {
+					return res.status(200).json({ body: 'Comment successfully posted!',
+						playlist: playlist });
+				});
+			})
+		})
+		.catch((error: CallbackError) => {
+			console.log(error);
+			return res.status(400).json({ body: 'Comment not posted!' });
+		})
+}
+
 const PlaylistController = {
 	createPlaylist,
 	duplicatePlaylist,
@@ -390,6 +432,7 @@ const PlaylistController = {
 	getPublishedPlaylists,
 	likePlaylist,
 	dislikePlaylist,
+	commentPlaylist,
 	publishPlaylist,
 	updatePlaylist
 }

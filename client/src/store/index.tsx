@@ -370,8 +370,31 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	canRedo: function() {
 		return tps.hasTransactionToRedo();
+	},
+	postComment: async function(text: string) {
+		if (store.openPlaylist !== null && store.openPlaylist.publishDate !== null) {
+			try {
+				const response = await api.commentPlaylist(store.openPlaylist._id, text);
+				if (response.status === 200) {
+					if (store.currentScreen === CurrentScreen.HOME) {
+						this.getUserPlaylists();
+					}
+					else if (store.currentScreen === CurrentScreen.ALL_LISTS ||
+						store.currentScreen === CurrentScreen.USER_LISTS) {
+							this.getPublishedPlaylists(store.searchText);
+					}
+				}
+				// openPlaylist needs to be updated...
+				// this is the only place where its used like this
+				storeDispatch({ type: StoreActionType.SET_OPEN_PLAYLIST, payload: {
+					playlist: response.data.playlist
+				}});
+			}
+			catch (err) {
+				console.log('Error encountered in postComment');
+			}
+		}
 	}
-
 })
 
 export default {

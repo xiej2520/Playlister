@@ -16,12 +16,12 @@ export const updatePlaylistById = (playlist: IPlaylistExport) => {
 		playlist: playlist
 	});
 };
-export const setPlaylistLike = (id: string, like: boolean) => api.put(`/playlist/like/${id}`, {
-	like: like
-});
-export const setPlaylistDislike = (id: string, dislike: boolean) => api.put(`/playlist/dislike/${id}`, {
-	dislike: dislike
-});
+export const setPlaylistLike = (id: string, like: boolean) =>
+	api.put(`/playlist/like/${id}`, { like: like });
+export const setPlaylistDislike = (id: string, dislike: boolean) =>
+	api.put(`/playlist/dislike/${id}`, { dislike: dislike });
+export const commentPlaylist = (id: string, comment: string) =>
+	api.post(`/playlist/comment/${id}`, { comment: comment });
 
 const apis = {
 	createPlaylist,
@@ -32,6 +32,7 @@ const apis = {
 	publishPlaylistById,
 	setPlaylistLike,
 	setPlaylistDislike,
+	commentPlaylist,
 	updatePlaylistById
 }
 

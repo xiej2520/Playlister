@@ -33,3 +33,10 @@ export interface IDislikePlaylistRequest extends Request {
 		dislike: boolean;
 	}
 }
+
+export interface ICommentPlaylistRequest extends Request {
+	userId: string;
+	body: {
+		comment: string;
+	}
+}
