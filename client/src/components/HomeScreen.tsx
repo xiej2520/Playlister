@@ -7,6 +7,7 @@ import EditSongModal from './modals/EditSongModal';
 import PlaylistCard from './PlaylistCard';
 import RemoveSongModal from './modals/RemoveSongModal';
 import PublishPlaylistModal from './modals/PublishPlaylistModal';
+import StoreErrorModal from './modals/StoreErrorModal';
 
 function HomeScreen() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
@@ -44,6 +45,7 @@ function HomeScreen() {
 		<EditSongModal/>
 		<PublishPlaylistModal/>
 		<RemoveSongModal/>
+		<StoreErrorModal/>
 	</>);
 }
 

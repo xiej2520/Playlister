@@ -9,6 +9,7 @@ import RegisterScreen from './RegisterScreen';
 import RemoveSongModal from './modals/RemoveSongModal';
 import SearchBar from './SearchBar';
 import StatusBar from './StatusBar';
+import StoreErrorModal from './modals/StoreErrorModal';
 import WelcomeScreen from './WelcomeScreen';
 import YouTubeWrapper from './YouTubeWrapper';
 import CommentView from './CommentView';
@@ -26,6 +27,7 @@ export {
 	RemoveSongModal,
 	SearchBar,
 	StatusBar,
+	StoreErrorModal,
 	WelcomeScreen,
 	YouTubeWrapper
 };

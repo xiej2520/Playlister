@@ -131,6 +131,7 @@ export default function AppBanner() {
 						<IconButton
 							size='large'
 							aria-label='home'
+							disabled={auth.user===null}
 							color={store.currentScreen==CurrentScreen.HOME ? 'secondary' : 'inherit'}
 							onClick={() => { handleLoadScreen(CurrentScreen.HOME) }}
 						>

@@ -30,7 +30,8 @@ export const enum ModalType {
 	DELETE_PLAYLIST,
 	PUBLISH_PLAYLIST,
 	EDIT_SONG,
-	REMOVE_SONG
+	REMOVE_SONG,
+	ERROR
 };
 
 export const enum SortType {
@@ -50,6 +51,7 @@ type CurrentModal =
 	| { type: ModalType.PUBLISH_PLAYLIST, fields: { playlistId: string, playlistName: string } }
 	| { type: ModalType.EDIT_SONG, fields: { index: number, title: string, artist: string, youTubeId: string } }
 	| { type: ModalType.REMOVE_SONG, fields: { index: number, title: string } }
+	| { type: ModalType.ERROR, fields: { errorMsg: string }}
 ;
 
 type StoreState = {
@@ -193,6 +195,9 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			const response = await api.getPublishedPlaylists();
 			if (response.status === 200) {
 				let playlists: IPlaylistExport[] = response.data.playlists;
+				if (text === '') {
+					playlists = [];
+				}
 				if (store.currentScreen === CurrentScreen.ALL_LISTS) {
 					playlists = playlists.filter(p => p.name.includes(text));
 				}
@@ -243,9 +248,19 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			playlist.name = newName;
 			const response = await api.updatePlaylistById(playlist);
 			this.getUserPlaylists();
+			return true;
 		}
-		catch (err) {
+		catch (err: any) {
+			storeDispatch({
+				type: StoreActionType.SET_MODAL,
+				payload: {
+					modal: { type: ModalType.ERROR, fields: {
+						errorMsg: err.response.data.errorMessage
+					}}
+				}
+			});
 			console.log(err);
+			return false;
 		}
 	},
 	updateCurrentPlaylist: async function() {

@@ -42,7 +42,7 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: Response) => {
 			let found = false;
 			while (!found) {
 				await Playlist
-					.findOne({ name: `Untitled Playlist ${i}`})
+					.findOne({ ownerId: req.userId, name: `Untitled Playlist ${i}`})
 					.then((playlist: IPlaylist | null) => {
 						if (playlist === null) {
 							found = true;
@@ -273,17 +273,22 @@ const updatePlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 			if (playlist.publishDate !== null) {
 				return res.status(400).json({ errorMessage: 'Playlist cannot be edited!' });
 			}
-			let updatedPlaylist = req.body.playlist;
-			playlist.name = updatedPlaylist.name;
-			playlist.songs = updatedPlaylist.songs;
-			playlist
-				.save()
-				.then(() => {
-					return res.status(200).json({ body: 'Playlist sucessfully edited!' });
-				})
-				.catch((error: CallbackError) => {
-					console.log(error);
-					return res.status(400).json({ body: 'Playlist not edited!' });
+			Playlist
+				.findOne({ user: req.userId, name: req.body.playlist.name })
+				.then((foundPlaylist: IPlaylist | null) => {
+					if (foundPlaylist !== null) {
+						return res.status(401).json({ errorMessage: 'A playlist with the same name already exists!'})
+					}
+					else {
+						let updatedPlaylist = req.body.playlist;
+						playlist.name = updatedPlaylist.name;
+						playlist.songs = updatedPlaylist.songs;
+						playlist
+							.save()
+							.then(() => {
+								return res.status(200).json({ body: 'Playlist sucessfully edited!' });
+							})
+					}
 				});
 		})
 		.catch((error: CallbackError) => {

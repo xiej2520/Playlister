@@ -36,10 +36,11 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 		event.stopPropagation();
 		setEditActive(true);
 	}
-	function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
+	async function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.code === 'Enter') {
-			StoreAPI.editPlaylistName(playlist, text);
-			setEditActive(false);
+			if (await StoreAPI.editPlaylistName(playlist, text)) {
+				setEditActive(false);
+			}
 		}
 	}
 	function handleUpdateText(event: React.ChangeEvent<HTMLInputElement>) {
