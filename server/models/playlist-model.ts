@@ -19,6 +19,8 @@ export interface IPlaylist extends Document {
 	ownerId: string;
 	songs: ISong[];
 	publishDate: Date | null;
+	createdAt: Date;
+	updatedAt: Date;
 	listens: number;
 	likeCount: number;
 	likes: Map<String, boolean>;
@@ -33,6 +35,8 @@ export interface IPlaylistExport {
 	ownerUsername: string;
 	songs: ISong[];
 	publishDate: Date | null;
+	createdAt: Date;
+	updatedAt: Date;
 	listens: number;
 	liked: boolean;
 	likeCount: number;

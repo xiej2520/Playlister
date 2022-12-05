@@ -3,6 +3,8 @@ import Grid from '@mui/material/Grid';
 import reactLogo from '../resources/logo.svg';
 import logo from '../resources/PlaylisterLogo.png'
 import { useNavigate } from 'react-router-dom';
+import { CurrentScreen, StoreActionType, StoreContext } from '../store';
+import { useContext } from 'react';
 
 let welcomeButtonSx = {
 	fontSize: 20,
@@ -12,6 +14,7 @@ let welcomeButtonSx = {
 
 export default function WelcomeScreen() {
 	const navigate = useNavigate();
+	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	return (
 		<Grid
 			container spacing={3}
@@ -58,7 +61,12 @@ export default function WelcomeScreen() {
 				<Button
 					variant='contained'
 					sx={welcomeButtonSx}
-					onClick={() => navigate('/home')}
+					onClick={() =>	{
+						navigate('/home')
+							storeDispatch({ type: StoreActionType.LOAD_SCREEN, payload: {
+								currentScreen: CurrentScreen.ALL_LISTS
+							}});
+					}}
 				>
 					Continue as Guest
 				</Button>

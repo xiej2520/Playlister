@@ -15,6 +15,8 @@ export interface IPlaylistExport {
 	ownerUsername: string;
 	songs: ISong[];
 	publishDate: Date | null;
+	createdAt: Date;
+	updatedAt: Date;
 	listens: number;
 	liked: boolean;
 	likeCount: number;

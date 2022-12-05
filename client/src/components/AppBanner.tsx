@@ -2,7 +2,7 @@ import { Box, AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Button } 
 import { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext, AuthAPICreator } from '../auth';
-import { CurrentScreen, StoreActionType, StoreAPICreator, StoreContext } from '../store';
+import { CurrentScreen, SortType, StoreActionType, StoreAPICreator, StoreContext } from '../store';
 
 import SearchBar from './SearchBar';
 
@@ -20,7 +20,7 @@ export default function AppBanner() {
 
 	const navigate = useNavigate();
 	const location = useLocation();
-	const isOnHome = location.pathname.split('/').includes('home');
+	const isOnPlaylists = location.pathname.split('/').includes('home');
 
 	const [profileAnchorEl, setProfileAnchorEl] = useState<HTMLElement | null>(null);
 	const isProfileMenuOpen = Boolean(profileAnchorEl);
@@ -37,8 +37,13 @@ export default function AppBanner() {
 	function handleProfileMenuClose() {
 		setProfileAnchorEl(null);
 	}
-	function handleSortMenuClose() {
+	function handleSortMenuClose(sortType: SortType | null) {
 		setSortAnchorEl(null);
+		if (sortType !== null) {
+			storeDispatch({ type: StoreActionType.SET_SORT_TYPE, payload: {
+				sortType: sortType
+			}});
+		}
 	}
 	
 	function handleLogout() {
@@ -111,6 +116,8 @@ export default function AppBanner() {
 		if (loggedIn) { return <div>{userInitials}</div>; }
 		else { return <AccountCircle />; }
 	}
+	
+	const isOnHome = store.currentScreen === CurrentScreen.HOME;
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 			<AppBar position="static">
@@ -130,7 +137,7 @@ export default function AppBanner() {
 							<HomeIcon/>
 						</IconButton>
 					</Typography>
-						{isOnHome ? <>
+						{isOnPlaylists ? <>
 							<IconButton
 								size="large"
 								aria-label="account of current user"
@@ -184,13 +191,26 @@ export default function AppBanner() {
 							horizontal: 'right',
 						}}
 						open={isSortMenuOpen}
-						onClose={handleSortMenuClose}
+						onClose={() => handleSortMenuClose(null)}
 					>
-						<MenuItem onClick={handleSortMenuClose}>Name (A - Z)</MenuItem>
-						<MenuItem onClick={handleSortMenuClose}>Publish Date (Newest)</MenuItem>
-						<MenuItem onClick={handleSortMenuClose}>Listens (High - Low)</MenuItem>
-						<MenuItem onClick={handleSortMenuClose}>Likes (High - Low)</MenuItem>
-						<MenuItem onClick={handleSortMenuClose}>Dislikes (High - Low)</MenuItem>
+						<MenuItem onClick={() => handleSortMenuClose(SortType.NAME)}>
+							Name (A - Z)</MenuItem>
+						{isOnHome ? <MenuItem onClick={() => handleSortMenuClose(SortType.EDIT_DATE)}>
+							Last Edit Date (New - Old)</MenuItem> : null}
+						{isOnHome ? <MenuItem onClick={() => handleSortMenuClose(SortType.CREATION_DATE)}>
+							Creation Date (Old - New)</MenuItem> : null}
+						{isOnHome ? null : 
+							<MenuItem onClick={() => handleSortMenuClose(SortType.PUBLISH_DATE)}>
+								Publish Date (Newest)</MenuItem> }
+						{isOnHome ? null : 
+							<MenuItem onClick={() => handleSortMenuClose(SortType.LISTENS)}>
+								Listens (High - Low)</MenuItem>}
+						{isOnHome ? null : 
+							<MenuItem onClick={() => handleSortMenuClose(SortType.LIKES)}>
+								Likes (High - Low)</MenuItem> }
+						{isOnHome ? null : 
+							<MenuItem onClick={() => handleSortMenuClose(SortType.DISLIKES)}>
+								Dislikes (High - Low)</MenuItem>}
 					</Menu>
 
 					<Box sx={{ display: { xs: 'none', md: 'flex' } }}>

@@ -17,6 +17,8 @@ function exportPlaylist(userId: String, playlist: IPlaylist): IPlaylistExport {
 		ownerUsername: playlist.ownerUsername,
 		songs: playlist.songs,
 		publishDate: playlist.publishDate,
+		createdAt: playlist.createdAt,
+		updatedAt: playlist.updatedAt,
 		listens: playlist.listens,
 		liked: playlist.likes.has(userId),
 		likeCount: playlist.likeCount,

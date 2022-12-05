@@ -14,7 +14,8 @@ export const enum StoreActionType {
 	LOAD_PLAYLISTS,
 	SET_OPEN_PLAYLIST,
 	SET_MODAL,
-	SET_SEARCH_TEXT
+	SET_SEARCH_TEXT,
+	SET_SORT_TYPE
 };
 
 export const enum CurrentScreen {
@@ -32,6 +33,17 @@ export const enum ModalType {
 	REMOVE_SONG
 };
 
+export const enum SortType {
+	NONE,
+	NAME,
+	EDIT_DATE,
+	CREATION_DATE,
+	PUBLISH_DATE,
+	LISTENS,
+	LIKES,
+	DISLIKES
+};
+
 type CurrentModal =
 	| { type: ModalType.NONE }
 	| { type: ModalType.DELETE_PLAYLIST, fields: { playlistId: string, playlistName: string } }
@@ -46,6 +58,7 @@ type StoreState = {
 	playlists: IPlaylistExport[];
 	openPlaylist: IPlaylistExport | null;
 	searchText: string;
+	sortType: SortType;
 };
 
 const defaultStore: StoreState = {
@@ -53,7 +66,8 @@ const defaultStore: StoreState = {
 	currentModal: { type: ModalType.NONE },
 	playlists: [],
 	openPlaylist: null,
-	searchText: ''
+	searchText: '',
+	sortType: SortType.NONE
 };
 
 type StoreAction =
@@ -62,6 +76,7 @@ type StoreAction =
 	| { type: StoreActionType.SET_OPEN_PLAYLIST, payload: { playlist: IPlaylistExport | null }}
 	| { type: StoreActionType.SET_MODAL, payload: { modal: CurrentModal }}
 	| { type: StoreActionType.SET_SEARCH_TEXT, payload: { searchText: string }}
+	| { type: StoreActionType.SET_SORT_TYPE, payload: { sortType: SortType }}
 ;
 
 const storeDefaultDispatch: Dispatch<StoreAction> = () => defaultStore;
@@ -69,6 +84,39 @@ const storeDefaultDispatch: Dispatch<StoreAction> = () => defaultStore;
 export const StoreContext = createContext(
 	{ state: defaultStore, dispatch: storeDefaultDispatch}
 );
+function sortPlaylists(playlists: IPlaylistExport[], sortType: SortType) {
+	switch (sortType) {
+		case SortType.NAME:
+			playlists.sort((a, b) => a.name.localeCompare(b.name));
+		break;
+		case SortType.EDIT_DATE:
+			playlists.sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
+		break;
+		case SortType.CREATION_DATE:
+			playlists.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+		break;
+		case SortType.PUBLISH_DATE:
+			playlists.sort((a, b) => {
+				if (b.publishDate === null) {
+					return 1;
+				}
+				else if (a.publishDate === null) {
+					return -1;
+				}
+				return new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime();
+			});
+		break;
+		case SortType.LISTENS:
+			playlists.sort((a, b) => b.listens - a.listens);
+		break;
+		case SortType.LIKES:
+			playlists.sort((a, b) => b.likeCount - a.likeCount);
+		break;
+		case SortType.DISLIKES:
+			playlists.sort((a, b) => b.dislikeCount - a.dislikeCount);
+		break;
+	}
+};
 
 export const StoreContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const storeReducer = (store: StoreState, { type, payload }: StoreAction): StoreState => {
@@ -103,6 +151,14 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 					searchText: payload.searchText
 				};
 			}
+			case StoreActionType.SET_SORT_TYPE: {
+				// ...
+				sortPlaylists(store.playlists, payload.sortType);
+				return {
+					...store,
+					sortType: payload.sortType
+				};
+			}
 			default: return store;
 		}
 	}
@@ -122,6 +178,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		try {
 			const response = await api.getUserPlaylists();
 			if (response.status === 200) {
+				sortPlaylists(response.data.playlists, store.sortType);
 				storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: {
 					playlists: response.data.playlists
 				}});
@@ -142,6 +199,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 				else if (store.currentScreen === CurrentScreen.USER_LISTS) {
 					playlists = playlists.filter(p => p.ownerUsername.includes(text));
 				}
+				sortPlaylists(playlists, store.sortType);
 				storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: {
 					playlists: playlists
 				}});
