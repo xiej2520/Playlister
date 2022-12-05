@@ -124,6 +124,7 @@ export default function AppBanner() {
 						<IconButton
 							size='large'
 							aria-label='home'
+							color={store.currentScreen==CurrentScreen.HOME ? 'secondary' : 'inherit'}
 							onClick={() => { handleLoadScreen(CurrentScreen.HOME) }}
 						>
 							<HomeIcon/>
@@ -135,7 +136,7 @@ export default function AppBanner() {
 								aria-label="account of current user"
 								aria-controls={menuId}
 								aria-haspopup="true"
-								color="inherit"
+								color={store.currentScreen==CurrentScreen.ALL_LISTS ? 'secondary' : 'inherit'}
 								onClick={() => { handleLoadScreen(CurrentScreen.ALL_LISTS) }}
 							>
 								<GroupsIcon/>
@@ -145,7 +146,7 @@ export default function AppBanner() {
 								aria-label="account of current user"
 								aria-controls={menuId}
 								aria-haspopup="true"
-								color="inherit"
+								color={store.currentScreen==CurrentScreen.USER_LISTS ? 'secondary' : 'inherit'}
 								onClick={() => { handleLoadScreen(CurrentScreen.USER_LISTS) }}
 							>
 								<PersonIcon/>

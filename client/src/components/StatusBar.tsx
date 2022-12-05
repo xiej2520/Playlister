@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { CurrentScreen, StoreAPICreator, StoreContext } from '../store';
 
 function StatusBar() {

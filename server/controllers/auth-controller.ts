@@ -110,12 +110,20 @@ const registerUser = async (req: Request<{}, {}, IRegisterUserBody>, res: Respon
 				.status(400)
 				.json({ errorMessage: 'Please enter the same password twice.'});
 		}
-		const existingUser = await User.findOne({ email: email });
+		let existingUser = await User.findOne({ email: email });
 		if (existingUser !== null) {
 			return res
 				.status(400)
 				.json({
 					errorMessage: 'An account with this email address already exists.'
+				});
+		}
+		existingUser = await User.findOne({ username: username });
+		if (existingUser !== null) {
+			return res
+				.status(400)
+				.json({
+					errorMessage: 'An account with this username already exists.'
 				});
 		}
 		const saltRounds = 10;

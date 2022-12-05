@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { CurrentScreen, StoreAPICreator, StoreContext } from '../store';
 import DeletePlaylistModal from './modals/DeletePlaylistModal';
 import EditSongModal from './modals/EditSongModal';
@@ -29,7 +29,7 @@ function HomeScreen() {
 	}, [store.currentScreen])
 
 	let playlistCards = (
-		<Box sx={{ height: '85vh', overflow: 'scroll' }}>
+		<Box sx={{ height: '85vh', overflow: 'scroll', transform: 'rotate(2deg)' }}>
 			{store.playlists.map((playlist) => (
 				<PlaylistCard
 					key={playlist._id}

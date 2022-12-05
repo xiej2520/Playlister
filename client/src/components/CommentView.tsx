@@ -34,6 +34,10 @@ function CommentView() {
 		setText(event.target.value);
 	}
 	return (
+		store.openPlaylist === null || store.openPlaylist.publishDate === null ?
+		<Box>
+			Open a published playlist to see comments!
+		</Box> :
 		<Box sx={{ display: 'flex', flexDirection: 'column',
 			height: '74vh'}}>
 			<Box sx={{ flexDirection: 'column', overflow: 'scroll'}}>
