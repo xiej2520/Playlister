@@ -16,6 +16,11 @@ export const updatePlaylistById = (playlist: IPlaylistExport) => {
 		playlist: playlist
 	});
 };
+export const updatePlaylistNameById = (playlist: IPlaylistExport) => {
+	return api.put(`/playlist/name/${playlist._id}`, {
+		playlist: playlist
+	});
+};
 export const setPlaylistLike = (id: string, like: boolean) =>
 	api.put(`/playlist/like/${id}`, { like: like });
 export const setPlaylistDislike = (id: string, dislike: boolean) =>
@@ -33,7 +38,8 @@ const apis = {
 	setPlaylistLike,
 	setPlaylistDislike,
 	commentPlaylist,
-	updatePlaylistById
+	updatePlaylistById,
+	updatePlaylistNameById
 }
 
 export default apis

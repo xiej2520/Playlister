@@ -8,6 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IPlaylistExport } from '../store/playlist-model';
 import { Grid, IconButton, TextField } from '@mui/material';
 import { ThumbUp, ThumbDown, ThumbUpOffAlt, ThumbDownOffAlt } from '@mui/icons-material';
+import InputIcon from '@mui/icons-material/Input';
 import SongCard from './SongCard';
 import { AuthContext } from '../auth';
 import { StoreContext, StoreAPICreator } from '../store';
@@ -38,13 +39,17 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 	}
 	async function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.code === 'Enter') {
-			if (await StoreAPI.editPlaylistName(playlist, text)) {
+			if (playlist.name === text || await StoreAPI.editPlaylistName(playlist, text)) {
 				setEditActive(false);
 			}
 		}
 	}
 	function handleUpdateText(event: React.ChangeEvent<HTMLInputElement>) {
 		setText(event.target.value);
+	}
+	function handleLoadPlaylist(event: React.MouseEvent<HTMLButtonElement>) {
+		event.stopPropagation();
+		StoreAPI.loadPlaylist(playlist);
 	}
 	function handleToggleLikePlaylist(event: React.MouseEvent<HTMLButtonElement>) {
 		event.stopPropagation();
@@ -133,6 +138,11 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 									onClick={handleEditName}>
 									<EditIcon/>
 								</IconButton>}
+								<IconButton
+									color='primary'
+									onClick={handleLoadPlaylist}>
+									<InputIcon/>
+								</IconButton>
 							</Typography>
 						}
 					</Grid>

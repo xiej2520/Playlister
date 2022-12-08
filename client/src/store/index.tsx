@@ -15,7 +15,8 @@ export const enum StoreActionType {
 	SET_OPEN_PLAYLIST,
 	SET_MODAL,
 	SET_SEARCH_TEXT,
-	SET_SORT_TYPE
+	SET_SORT_TYPE,
+	SET_PLAYING_PLAYLIST
 };
 
 export const enum CurrentScreen {
@@ -59,6 +60,7 @@ type StoreState = {
 	currentModal: CurrentModal;
 	playlists: IPlaylistExport[];
 	openPlaylist: IPlaylistExport | null;
+	playing: { playlist: IPlaylistExport, index: number } | null;
 	searchText: string;
 	sortType: SortType;
 };
@@ -68,6 +70,7 @@ const defaultStore: StoreState = {
 	currentModal: { type: ModalType.NONE },
 	playlists: [],
 	openPlaylist: null,
+	playing: null,
 	searchText: '',
 	sortType: SortType.NONE
 };
@@ -79,6 +82,7 @@ type StoreAction =
 	| { type: StoreActionType.SET_MODAL, payload: { modal: CurrentModal }}
 	| { type: StoreActionType.SET_SEARCH_TEXT, payload: { searchText: string }}
 	| { type: StoreActionType.SET_SORT_TYPE, payload: { sortType: SortType }}
+	| { type: StoreActionType.SET_PLAYING_PLAYLIST, payload: { playlist: IPlaylistExport, index: number } | null }
 ;
 
 const storeDefaultDispatch: Dispatch<StoreAction> = () => defaultStore;
@@ -160,6 +164,12 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 					...store,
 					sortType: payload.sortType
 				};
+			}
+			case StoreActionType.SET_PLAYING_PLAYLIST: {
+				return {
+					...store,
+					playing: payload
+				}
 			}
 			default: return store;
 		}
@@ -246,7 +256,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	editPlaylistName: async function(playlist: IPlaylistExport, newName: string) {
 		try {
 			playlist.name = newName;
-			const response = await api.updatePlaylistById(playlist);
+			const response = await api.updatePlaylistNameById(playlist);
 			this.getUserPlaylists();
 			return true;
 		}
@@ -467,6 +477,12 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 				console.log('Error encountered in postComment');
 			}
 		}
+	},
+	loadPlaylist: function(playlist: IPlaylistExport) {
+		storeDispatch({ type: StoreActionType.SET_PLAYING_PLAYLIST, payload: {
+			playlist: playlist,
+			index: 0
+		}});
 	}
 })
 

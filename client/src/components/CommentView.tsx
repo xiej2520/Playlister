@@ -1,5 +1,4 @@
 import { Box, Card, CardContent, TextField, Typography } from '@mui/material';
-import { color } from '@mui/system';
 import { useContext, useState } from 'react';
 import { StoreAPICreator, StoreContext } from '../store';
 
@@ -17,7 +16,7 @@ function CommentView() {
 						<Typography sx={{ color:'text.secondary'}} gutterBottom>
 							{comment.ownerUsername}
 						</Typography>
-						<Typography>
+						<Typography display='block' style={{ wordWrap: 'break-word' }}>
 							{comment.text}
 						</Typography>
 					</CardContent>
