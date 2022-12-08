@@ -119,7 +119,7 @@ export default function AppBanner() {
 	
 	const isOnHome = store.currentScreen === CurrentScreen.HOME;
 	return (
-		<Box sx={{ flexGrow: 1 }}>
+		<Box sx={{ flexGrow: 1 }} style={{zIndex: 100}}>
 			<AppBar position="static">
 				<Toolbar>
 					<Typography

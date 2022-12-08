@@ -315,7 +315,12 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		if (store.currentModal.type === ModalType.DELETE_PLAYLIST) {
 			await api.deletePlaylistById(store.currentModal.fields.playlistId);
 			this.closeModal();
-			this.getUserPlaylists();
+			if (store.currentScreen === CurrentScreen.HOME) {
+				this.getUserPlaylists();
+			}
+			else {
+				this.getPublishedPlaylists(store.searchText);
+			}
 		}
 		else {
 			console.log('Error: tried to delete playlist without open modal.');
@@ -478,10 +483,18 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			}
 		}
 	},
-	loadPlaylist: function(playlist: IPlaylistExport) {
+	loadPlaylist: async function(playlist: IPlaylistExport) {
+		playlist.listens++;
+		const response = await api.updatePlaylistListens(playlist);
+		if (store.currentScreen === CurrentScreen.HOME) {
+				this.getUserPlaylists();
+			}
+			else {
+				this.getPublishedPlaylists(store.searchText);
+			}
 		storeDispatch({ type: StoreActionType.SET_PLAYING_PLAYLIST, payload: {
 			playlist: playlist,
-			index: 0
+			index: -1
 		}});
 	}
 })

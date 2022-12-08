@@ -68,12 +68,17 @@ export default function YouTubeWrapper() {
 	const [sIndex, setSIndex] = useState(0);
 
 	function loadAndPlayCurrentSong(player: any) {
-		if (store.playing !== null && store.playing.playlist !== null) {
+		if (store.playing !== null && store.playing.playlist !== null && player !== null) {
 			let song = store.playing.playlist.songs[store.playing.index];
-			player.loadVideoById({
-				videoId: song.youTubeId
-			});
-			player.playVideo();
+			try {
+				player.loadVideoById({
+					videoId: song.youTubeId
+				});
+				player.playVideo();
+			}
+			catch (err) {
+				console.log(err)
+			}
 		}
 	}
 	function incSong() {
@@ -143,6 +148,7 @@ export default function YouTubeWrapper() {
 	const opts = {
 		height: '400px',
 		width: '100%',
+		autoplay: 0,
 		playerVars: {
 			autoplay: 0
 		}
@@ -159,7 +165,10 @@ export default function YouTubeWrapper() {
 			artist: "",
 			youTubeId: ""
 		};
-	loadAndPlayCurrentSong(yplayer);
+	if (store.playing !== null && store.playing.index == -1) {
+		store.playing.index = 0;
+		loadAndPlayCurrentSong(yplayer);
+	}
 	return (
 		<Box sx={{ transform: 'rotate(-2deg)' }}>
 			<AppBar position="static">
@@ -227,11 +236,13 @@ export default function YouTubeWrapper() {
 							>
 								<Pause />
 							</IconButton>
+							{/*
 							<IconButton
 								onClick={handleStop}
 							>
 								<Stop />
 							</IconButton>
+							*/}
 							<IconButton
 								onClick={handleForward}
 							>

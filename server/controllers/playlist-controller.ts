@@ -288,6 +288,34 @@ const updatePlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 		})
 }
 
+const updatePlaylistListens = async(req: IUpdatePlaylistRequest, res: Response) => {
+	if (!req.body) {
+		return res.status(400).json({
+			error: 'You must provide a body to update!'
+		});
+	}
+	Playlist
+		.findById(req.params.id)
+		.then((playlist: IPlaylist | null) => {
+			if (playlist === null) {
+				return res.status(404).json({ errorMessage: 'Playlist not found!' });
+			}
+			let updatedPlaylist = req.body.playlist;
+			playlist.name = updatedPlaylist.name;
+			playlist.songs = updatedPlaylist.songs;
+			playlist.listens++;
+			playlist
+				.save()
+				.then(() => {
+					return res.status(200).json({ body: 'Playlist sucessfully edited!' });
+				})
+		})
+		.catch((error: CallbackError) => {
+			console.log(error);
+			return res.status(400).json({ body: 'Playlist not edited!' });
+		})
+}
+
 const updatePlaylistName = async(req: IUpdatePlaylistRequest, res: Response) => {
 	if (auth.verifyUser(req) === null) {
 		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
@@ -310,7 +338,7 @@ const updatePlaylistName = async(req: IUpdatePlaylistRequest, res: Response) => 
 				return res.status(400).json({ errorMessage: 'Playlist cannot be edited!' });
 			}
 			Playlist
-				.findOne({ user: req.userId, name: req.body.playlist.name })
+				.findOne({ ownerId: req.userId, name: req.body.playlist.name })
 				.then((foundPlaylist: IPlaylist | null) => {
 					if (foundPlaylist !== null) {
 						return res.status(401).json({ errorMessage: 'A playlist with the same name already exists!'})
@@ -478,6 +506,7 @@ const PlaylistController = {
 	commentPlaylist,
 	publishPlaylist,
 	updatePlaylist,
-	updatePlaylistName
+	updatePlaylistName,
+	updatePlaylistListens
 }
 export default PlaylistController; 

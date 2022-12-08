@@ -138,11 +138,12 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 									onClick={handleEditName}>
 									<EditIcon/>
 								</IconButton>}
-								<IconButton
+								{playlist.songs.length > 0 ? <IconButton
 									color='primary'
 									onClick={handleLoadPlaylist}>
 									<InputIcon/>
 								</IconButton>
+								: <></>}
 							</Typography>
 						}
 					</Grid>

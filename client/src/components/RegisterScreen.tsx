@@ -40,7 +40,7 @@ export default function RegisterScreen() {
 			formElements.password.value,
 			formElements.passwordVerify.value
 		)) {
-			navigate('/home');
+			navigate('/login');
 		}
 	};
 	let modalJSX = ""
