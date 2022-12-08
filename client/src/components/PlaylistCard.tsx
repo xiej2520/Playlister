@@ -107,6 +107,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 	</> :
 	<></>;
 
+	const playing = store.playing !== null && store.playing.playlist._id == playlist._id;
 	return (
 		<Accordion
 			expanded={isExpanded}
@@ -116,7 +117,8 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls="panel1bh-content"
 				id="panel1bh-header"
-				sx={{ bgcolor: published ? 'grey.800' : 'grey.900', position: 'sticky', top: '0', zIndex: 100 }}
+				sx={{ bgcolor: playing ? '#512da8' :
+					published ? 'grey.800' : 'grey.900', position: 'sticky', top: '0', zIndex: 100 }}
 			>
 				<Grid container>
 					<Grid item xs={8}>
