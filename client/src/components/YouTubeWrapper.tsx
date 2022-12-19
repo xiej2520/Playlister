@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -100,8 +99,10 @@ export default function YouTubeWrapper() {
 	}
 	function onPlayerReady(event: any) {
 		setYplayer(event.target);
-		loadAndPlayCurrentSong(event.target);
-		event.target.playVideo();
+		if (store.playing !== null) {
+			loadAndPlayCurrentSong(event.target);
+			event.target.playVideo();
+		}
 	}
 	function onPlayerStateChange(event: any) {
 		let playerStatus = event.data;

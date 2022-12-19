@@ -12,7 +12,6 @@ router.delete('/playlist/:id', auth.verify, PlaylistController.deletePlaylist);
 router.post('/duplicateplaylist/:id', auth.verify, PlaylistController.duplicatePlaylist);
 router.put('/playlist/publish/:id', auth.verify, PlaylistController.publishPlaylist);
 router.put('/playlist/:id', auth.verify, PlaylistController.updatePlaylist);
-router.put('/playlist/name/:id', auth.verify, PlaylistController.updatePlaylistName);
 router.put('/playlist/listens/:id', PlaylistController.updatePlaylistListens);
 router.put('/playlist/like/:id', auth.verify, PlaylistController.likePlaylist);
 router.put('/playlist/dislike/:id', auth.verify, PlaylistController.dislikePlaylist);

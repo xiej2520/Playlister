@@ -130,7 +130,16 @@ const registerUser = async (req: Request<{}, {}, IRegisterUserBody>, res: Respon
 		const salt = await bcrypt.genSalt(saltRounds);
 		const passwordHash = await bcrypt.hash(password, salt);
 
-		const newUser = new User({ firstName, lastName, username, email, passwordHash, playlistCount: 0});
+		const newUser = new User({
+			firstName,
+			lastName,
+			username,
+			email,
+			passwordHash,
+			dislikes: new Map<String, boolean>(),
+			likes: new Map<String, boolean>(),
+			playlists: new Map<String, boolean>()
+		});
 		const savedUser = await newUser.save();
 
 		const token = auth.signToken(savedUser._id); 

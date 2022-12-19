@@ -50,8 +50,7 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: Response) => {
 						else {
 							i++;
 						}
-					})
-					.catch((err: CallbackError) => console.log(err));
+					});
 			}
 			const playlist = new Playlist({
 				name: `Untitled Playlist ${i}`,
@@ -61,11 +60,11 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: Response) => {
 				publishDate: null,
 				listens: 0,
 				likeCount: 0,
-				likes: new Map(),
+				likes: new Map<String, boolean>(),
 				dislikeCount: 0,
-				dislikes: new Map()
+				dislikes: new Map<String, boolean>()
 			});
-			user.playlists.push(playlist._id);
+			user.playlists.set(playlist._id, true);
 			user.save().then(() => {
 				playlist
 					.save()
@@ -76,12 +75,18 @@ const createPlaylist = async (req: ICreatePlaylistRequest, res: Response) => {
 					})
 					.catch((err) => {
 						console.log(err);
+						user.playlists.delete(playlist._id);
 						return res.status(400).json({
 							errorMessage: 'Playlist not created!'
 						});
 					});
 			});
-	});
+	}).catch((err) => {
+		console.log(err);
+		return res.status(400).json({
+			errorMessage: 'Playlist not created!'
+		});
+	});;
 }
 
 const duplicatePlaylist = (req: ICreatePlaylistRequest, res: Response) => {
@@ -112,8 +117,7 @@ const duplicatePlaylist = (req: ICreatePlaylistRequest, res: Response) => {
 								else {
 									i++;
 								}
-							})
-							.catch((err: CallbackError) => console.log(err));
+							});
 					}
 					const dupePlaylist = new Playlist({
 						name: playlist.name + ` ${i}`,
@@ -123,11 +127,11 @@ const duplicatePlaylist = (req: ICreatePlaylistRequest, res: Response) => {
 						publishDate: null,
 						listens: 0,
 						likeCount: 0,
-						likes: new Map(),
+						likes: new Map<String, boolean>(),
 						dislikeCount: 0,
-						dislikes: new Map()
+						dislikes: new Map<String, boolean>()
 					});
-					user.playlists.push(dupePlaylist._id);
+					user.playlists.set(dupePlaylist._id, true);
 					user.save().then(() => {
 						dupePlaylist
 							.save()
@@ -136,13 +140,20 @@ const duplicatePlaylist = (req: ICreatePlaylistRequest, res: Response) => {
 									playlist: exportPlaylist(user.id, dupePlaylist)
 								});
 							})
+							.catch((err) => {
+								console.log(err);
+								user.playlists.delete(playlist._id);
+								return res.status(400).json({
+									errorMessage: 'Playlist not duplicated!'
+								});
+							})
 					});
 				})
 			})
 		.catch((err) => {
 			console.log(err);
 			return res.status(400).json({
-				errorMessage: 'Playlist not created!'
+				errorMessage: 'Playlist not duplicated!'
 			});
 		});;
 };
@@ -162,7 +173,16 @@ const deletePlaylist = async (req: IDeletePlaylistRequest, res: Response) => {
 			}
 			Playlist
 				.findByIdAndDelete(req.params.id)
-				.then(() => { return res.status(200).json({ body: 'Playlist successfully deleted.' }); })
+				.then(() => {
+					User.findOne({ _id: req.userId })
+						.then(async (user: IUser | null) => {
+							if (user !== null) {
+								user.playlists.delete(req.params.id);
+								user.save();
+							}
+						});
+					return res.status(200).json({ body: 'Playlist successfully deleted.' });
+				})
 				.catch((err: CallbackError) => console.log(err));
 		})
 		.catch((err: CallbackError) => console.log(err));
@@ -177,11 +197,6 @@ const getUserPlaylists = async (req: IGetPlaylistsRequest, res: Response) => {
 		//.select('name ownerName songs publishDate listens likeCount dislikeCount')
 		.exec()
 		.then((playlists: IPlaylist[]) => {
-			if (!playlists.length) {
-				return res
-					.status(404)
-					.json({ error: 'Playlists not found.' });
-			}
 			return res.status(200).json({ playlists: playlists.map(
 				(playlist) => exportPlaylist(req.userId, playlist))
 			});
@@ -240,10 +255,6 @@ const publishPlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 				.save()
 				.then(() => {
 					return res.status(200).json({ body: 'Playlist sucessfully published!' });
-				})
-				.catch((error: CallbackError) => {
-					console.log(error);
-					return res.status(400).json({ body: 'Playlist not published!' });
 				});
 		})
 		.catch((error: CallbackError) => {
@@ -253,70 +264,6 @@ const publishPlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 }
 
 const updatePlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
-	if (auth.verifyUser(req) === null) {
-		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
-	}
-	if (!req.body) {
-		return res.status(400).json({
-			error: 'You must provide a body to update!'
-		});
-	}
-	Playlist
-		.findById(req.params.id)
-		.then((playlist: IPlaylist | null) => {
-			if (playlist === null) {
-				return res.status(404).json({ errorMessage: 'Playlist not found!' });
-			}
-			if (playlist.ownerId != req.userId) {
-				return res.status(401).json({ errorMessage: 'User does not have permission to edit this playlist!' });
-			}
-			if (playlist.publishDate !== null) {
-				return res.status(400).json({ errorMessage: 'Playlist cannot be edited!' });
-			}
-			let updatedPlaylist = req.body.playlist;
-			playlist.name = updatedPlaylist.name;
-			playlist.songs = updatedPlaylist.songs;
-			playlist
-				.save()
-				.then(() => {
-					return res.status(200).json({ body: 'Playlist sucessfully edited!' });
-				});
-		})
-		.catch((error: CallbackError) => {
-			console.log(error);
-			return res.status(400).json({ body: 'Playlist not edited!' });
-		})
-}
-
-const updatePlaylistListens = async(req: IUpdatePlaylistRequest, res: Response) => {
-	if (!req.body) {
-		return res.status(400).json({
-			error: 'You must provide a body to update!'
-		});
-	}
-	Playlist
-		.findById(req.params.id)
-		.then((playlist: IPlaylist | null) => {
-			if (playlist === null) {
-				return res.status(404).json({ errorMessage: 'Playlist not found!' });
-			}
-			let updatedPlaylist = req.body.playlist;
-			playlist.name = updatedPlaylist.name;
-			playlist.songs = updatedPlaylist.songs;
-			playlist.listens++;
-			playlist
-				.save()
-				.then(() => {
-					return res.status(200).json({ body: 'Playlist sucessfully edited!' });
-				})
-		})
-		.catch((error: CallbackError) => {
-			console.log(error);
-			return res.status(400).json({ body: 'Playlist not edited!' });
-		})
-}
-
-const updatePlaylistName = async(req: IUpdatePlaylistRequest, res: Response) => {
 	if (auth.verifyUser(req) === null) {
 		return res.status(400).json({ errorMessage: 'Unauthorized request.' });
 	}
@@ -351,9 +298,37 @@ const updatePlaylistName = async(req: IUpdatePlaylistRequest, res: Response) => 
 							.save()
 							.then(() => {
 								return res.status(200).json({ body: 'Playlist sucessfully edited!' });
-							})
+							});
 					}
 				});
+		})
+		.catch((error: CallbackError) => {
+			console.log(error);
+			return res.status(400).json({ body: 'Playlist not edited!' });
+		})
+}
+
+const updatePlaylistListens = async(req: IUpdatePlaylistRequest, res: Response) => {
+	if (!req.body) {
+		return res.status(400).json({
+			error: 'You must provide a body to update!'
+		});
+	}
+	Playlist
+		.findById(req.params.id)
+		.then((playlist: IPlaylist | null) => {
+			if (playlist === null) {
+				return res.status(404).json({ errorMessage: 'Playlist not found!' });
+			}
+			let updatedPlaylist = req.body.playlist;
+			playlist.name = updatedPlaylist.name;
+			playlist.songs = updatedPlaylist.songs;
+			playlist.listens++;
+			playlist
+				.save()
+				.then(() => {
+					return res.status(200).json({ body: 'Playlist sucessfully edited!' });
+				})
 		})
 		.catch((error: CallbackError) => {
 			console.log(error);
@@ -492,7 +467,7 @@ const commentPlaylist = async(req: ICommentPlaylistRequest, res: Response) => {
 		.catch((error: CallbackError) => {
 			console.log(error);
 			return res.status(400).json({ body: 'Comment not posted!' });
-		})
+		});
 }
 
 const PlaylistController = {
@@ -506,7 +481,6 @@ const PlaylistController = {
 	commentPlaylist,
 	publishPlaylist,
 	updatePlaylist,
-	updatePlaylistName,
 	updatePlaylistListens
 }
 export default PlaylistController; 

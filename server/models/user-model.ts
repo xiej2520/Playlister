@@ -1,6 +1,6 @@
 export {};
 
-import { Schema, Types, Model, Document, model } from 'mongoose';
+import { Schema, Model, Document, model } from 'mongoose';
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -9,8 +9,10 @@ export interface IUser extends Document {
 	lastName: string;
 	username: string;
 	email: string;
+	dislikes: Map<String, boolean>;
+	likes: Map<String, boolean>;
 	passwordHash: string;
-	playlists: Types.ObjectId[];
+	playlists: Map<String, boolean>;
 };
 
 export const UserSchema = new Schema<IUser>(
@@ -20,7 +22,9 @@ export const UserSchema = new Schema<IUser>(
 		username: { type: String, required: true},
 		email: { type: String, required: true },
 		passwordHash: { type: String, required: true },
-		playlists: [{ type: ObjectId, ref: 'Playlist' }],
+		dislikes: { type: Map, of: String },
+		likes: { type: Map, of: String },
+		playlists: { type: Map, of: String }
 	},
 	{ timestamps: true}
 );
