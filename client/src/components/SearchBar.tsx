@@ -1,7 +1,7 @@
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CurrentScreen, StoreActionType, StoreAPICreator, StoreContext } from '../store';
 
 // adapted from https://mui.com/material-ui/react-app-bar/
@@ -53,19 +53,13 @@ export default function SearchBar() {
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
 	const [text, setText] = useState('');
+	useEffect(() => {
+		StoreAPI.displayPlaylists();
+	}, [store.searchText]);
 
-	function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
-		if (event.code === 'Enter') {
-			storeDispatch({ type: StoreActionType.SET_SEARCH_TEXT, payload: { searchText: text }});
-			StoreAPI.getPlaylists();
-		}
-	}
 	function handleUpdateText(event: React.ChangeEvent<HTMLInputElement>) {
 		setText(event.target.value);
-	}
-	if (store.currentScreen !== CurrentScreen.ALL_LISTS &&
-		store.currentScreen !== CurrentScreen.USER_LISTS) {
-			return <></>;
+		storeDispatch({ type: StoreActionType.SET_SEARCH_TEXT, payload: { searchText: event.target.value }});
 	}
 	return (
 		<Search>
@@ -75,7 +69,6 @@ export default function SearchBar() {
 			<StyledInputBase
 				placeholder="Search"
 				inputProps={{ 'aria-label': 'search' }}
-				onKeyPress={handleKeyPress}
 				onChange={handleUpdateText}
 			/>
 		</Search>);

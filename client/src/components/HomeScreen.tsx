@@ -13,23 +13,12 @@ function HomeScreen() {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 	useEffect(() => {
-		if (store.currentScreen === CurrentScreen.HOME) {
-			StoreAPI.getPlaylists();
-		}
-		else if (store.currentScreen === CurrentScreen.ALL_LISTS) {
-			StoreAPI.unloadPlaylists();
-		}
-		else if (store.currentScreen === CurrentScreen.USER_LISTS) {
-			StoreAPI.unloadPlaylists();
-		}
-		else {
-			StoreAPI.unloadPlaylists();
-		}
+		StoreAPI.getPlaylists();
 	}, [store.currentScreen])
 
 	let playlistCards = (
 		<Box sx={{ height: '85vh', overflow: 'scroll', transform: 'rotate(2deg)' }}>
-			{store.playlists.map((playlist) => (
+			{store.displayedPlaylists.map((playlist) => (
 				<PlaylistCard
 					key={playlist._id}
 					playlist={playlist}/>

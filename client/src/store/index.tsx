@@ -218,19 +218,20 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			storeDispatch({ type: StoreActionType.GET_PLAYLISTS, payload: {
 				playlists: playlists
 			}});
+		// needed here to avoid asyc store reducer
 			if (store.searchText !== '') {
 				const lowerText = store.searchText.toLowerCase();
-				if (store.currentScreen === CurrentScreen.ALL_LISTS) {
+				if (store.currentScreen === CurrentScreen.HOME || store.currentScreen === CurrentScreen.ALL_LISTS) {
 					playlists = playlists.filter(p => p.name.toLowerCase().includes(lowerText));
 				}
 				else if (store.currentScreen === CurrentScreen.USER_LISTS) {
 					playlists = playlists.filter(p => p.ownerUsername.toLowerCase().includes(lowerText));
 				}
 				sortPlaylists(playlists, store.sortType);
-				storeDispatch({ type: StoreActionType.DISPLAY_PLAYLISTS, payload: {
-					displayedPlaylists: playlists
-				}});
 			}
+			storeDispatch({ type: StoreActionType.DISPLAY_PLAYLISTS, payload: {
+				displayedPlaylists: playlists
+			}});
 		}
 		catch (err) {
 			console.log('Error encountered in getPlaylists.');
@@ -240,17 +241,17 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		let playlists = store.playlists;
 		if (store.searchText !== '') {
 			const lowerText = store.searchText.toLowerCase();
-			if (store.currentScreen === CurrentScreen.ALL_LISTS) {
+			if (store.currentScreen === CurrentScreen.HOME || store.currentScreen === CurrentScreen.ALL_LISTS) {
 				playlists = playlists.filter(p => p.name.toLowerCase().includes(lowerText));
 			}
 			else if (store.currentScreen === CurrentScreen.USER_LISTS) {
 				playlists = playlists.filter(p => p.ownerUsername.toLowerCase().includes(lowerText));
 			}
 			sortPlaylists(playlists, store.sortType);
-			storeDispatch({ type: StoreActionType.DISPLAY_PLAYLISTS, payload: {
-				displayedPlaylists: playlists
-			}});
 		}
+		storeDispatch({ type: StoreActionType.DISPLAY_PLAYLISTS, payload: {
+			displayedPlaylists: playlists
+		}});
 	},
 	setOpenPlaylist: function(playlist: IPlaylistExport | null) {
 		storeDispatch({ type: StoreActionType.SET_OPEN_PLAYLIST, payload: {
