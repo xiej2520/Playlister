@@ -85,7 +85,6 @@ export default function YouTubeWrapper() {
 			store.playing.index++;
 			store.playing.index %= store.playing.playlist.songs.length;
 			setSIndex(store.playing.index);
-
 		}
 	}
 	function decSong() {
@@ -170,6 +169,11 @@ export default function YouTubeWrapper() {
 		store.playing.index = 0;
 		loadAndPlayCurrentSong(yplayer);
 	}
+	const labelStyle = {
+		color: 'grey.400',
+		paddingRight: '25px',
+		textAlign: 'right'
+	};
 	return (
 		<Box sx={{ transform: 'rotate(-2deg)' }}>
 			<AppBar position="static">
@@ -193,35 +197,48 @@ export default function YouTubeWrapper() {
 					opts={opts}
 				/>
 				{store.playing === null ? <></> :
-					<Grid container>
-						<Grid item xs={12}>
-							Now Playing:
+					<Grid container sx={{
+						bgcolor: '#512da8',
+						padding: '10px'
+					}}>
+						<Grid item xs={12}
+							sx={{
+								borderBottom: '1px solid white',
+								padding: '5px',
+								textAlign: 'center'
+							}}
+						>
+							<Typography variant='h5'>Now Playing:</Typography>
 						</Grid>
-						<Grid item xs={4}>
+						<Grid item xs={6} sx={labelStyle}>
 							Playlist:
 						</Grid>
-						<Grid item xs={8}>
+						<Grid item xs={6}>
 							{currentPlaylistName}
 						</Grid>
-						<Grid item xs={4}>
-							Song #:
+						<Grid item xs={6} sx={labelStyle}>
+							Song #
 						</Grid>
-						<Grid item xs={8}>
+						<Grid item xs={6}>
 							{store.playing === null ? -1 : store.playing.index + 1}
 						</Grid>
-						<Grid item xs={4}>
+						<Grid item xs={6} sx={labelStyle}>
 							Title:
 						</Grid>
-						<Grid item xs={8}>
+						<Grid item xs={6}>
 							{currentSong.title}
 						</Grid>
-						<Grid item xs={4}>
+						<Grid item xs={6} sx={labelStyle}>
 							Artist:
 						</Grid>
-						<Grid item xs={8}>
+						<Grid item xs={6}>
 							{currentSong.artist}
 						</Grid>
-						<Box>
+						<Grid item xs={12} sx={{
+							bgcolor: 'grey.900',
+							marginTop: '10px',
+							textAlign: 'center'
+							}}>
 							<IconButton
 								onClick={handleRewind}
 							>
@@ -249,7 +266,7 @@ export default function YouTubeWrapper() {
 							>
 								<FastForward />
 							</IconButton>
-						</Box>
+						</Grid>
 					</Grid>
 				}
 			</TabPanel>
