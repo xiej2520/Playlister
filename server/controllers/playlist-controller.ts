@@ -287,17 +287,15 @@ const updatePlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 					if (foundPlaylist !== null) {
 						return res.status(401).json({ errorMessage: 'A playlist with the same name already exists!'});
 					}
-					else {
-						playlist.name = updatedPlaylist.name;
-						playlist.songs = updatedPlaylist.songs;
-						playlist
-							.save()
-							.then(() => {
-								return res.status(200).json({ body: 'Playlist sucessfully edited!' });
-							});
-					}
 				});
 			}
+			playlist.name = updatedPlaylist.name;
+			playlist.songs = updatedPlaylist.songs;
+			playlist
+				.save()
+				.then(() => {
+					return res.status(200).json({ body: 'Playlist sucessfully edited!' });
+				});
 		})
 		.catch((error: CallbackError) => {
 			console.log(error);

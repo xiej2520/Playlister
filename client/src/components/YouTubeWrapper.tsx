@@ -13,8 +13,8 @@ import Pause from '@mui/icons-material/Pause';
 import Stop from '@mui/icons-material/Stop';
 import FastForward from '@mui/icons-material/FastForward';
 import FastRewind from '@mui/icons-material/FastRewind';
-import { useContext, useState } from 'react';
-import { StoreContext, StoreAPICreator } from '../store';
+import { useContext, useEffect, useState } from 'react';
+import { StoreContext, StoreAPICreator, StoreActionType } from '../store';
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -58,13 +58,16 @@ export default function YouTubeWrapper() {
 
 	const theme = useTheme();
 	const [value, setValue] = React.useState(0);
+	
+	useEffect(() => {
+		loadAndPlayCurrentSong(yplayer);
+	}, [store.playing && store.playing.index]); // allow checking nullable
 
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue);
 	};
 
 	const [yplayer, setYplayer] = useState<any>(null);
-	const [sIndex, setSIndex] = useState(0);
 
 	function loadAndPlayCurrentSong(player: any) {
 		if (store.playing !== null && store.playing.playlist !== null && player !== null) {
@@ -82,18 +85,19 @@ export default function YouTubeWrapper() {
 	}
 	function incSong() {
 		if (store.playing !== null) {
-			store.playing.index++;
-			store.playing.index %= store.playing.playlist.songs.length;
-			setSIndex(store.playing.index);
+			storeDispatch({ type: StoreActionType.SET_PLAYING_PLAYLIST, payload: {
+				playlist: store.playing.playlist,
+				index: (store.playing.index + 1) % store.playing.playlist.songs.length
+			}});
 		}
 	}
 	function decSong() {
 		if (store.playing !== null) {
-			store.playing.index--;
-			store.playing.index += store.playing.playlist.songs.length;
-			store.playing.index %= store.playing.playlist.songs.length;
-			setSIndex(store.playing.index);
-
+			let n = store.playing.playlist.songs.length;
+			storeDispatch({ type: StoreActionType.SET_PLAYING_PLAYLIST, payload: {
+				playlist: store.playing.playlist,
+				index: (store.playing.index - 1 + n) % n
+			}});
 		}
 	}
 	function onPlayerReady(event: any) {
@@ -112,7 +116,6 @@ export default function YouTubeWrapper() {
 		else if (playerStatus === 0) {
 			// video done playing
 			incSong();
-			setSIndex(store.playing!.index);
 			loadAndPlayCurrentSong(player);
 		}
 		else if (playerStatus === 1) {
@@ -153,10 +156,6 @@ export default function YouTubeWrapper() {
 			autoplay: 0
 		}
 	};
-	
-	if (store.playing !== null && sIndex !== store.playing.index) {
-		setSIndex(store.playing.index);
-	}
 
 	const currentPlaylistName = store.playing !== null ? store.playing.playlist.name : "";
 	let currentSong = store.playing !== null && store.playing.playlist.songs.length > 0 ?

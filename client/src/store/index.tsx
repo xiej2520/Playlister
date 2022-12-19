@@ -146,10 +146,22 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 						}
 					}
 				}
+				let playingPlaylist = null;
+				if (store.playing !== null && store.playing.playlist !== null) {
+					for (const p of payload.playlists) {
+						if (p._id === store.playing.playlist._id) {
+							playingPlaylist = p;
+						}
+					}
+				}
+				let playing = playingPlaylist === null ? null : {
+					playlist: playingPlaylist, index: store.playing!.index
+				}
 				return {
 					...store,
 					openPlaylist: openPlaylist,
-					playlists: payload.playlists
+					playlists: payload.playlists,
+					playing: playing
 				};
 			}
 			case StoreActionType.DISPLAY_PLAYLISTS: {
