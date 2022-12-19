@@ -11,12 +11,13 @@ const tps = new tsTPS();
 
 export const enum StoreActionType {
 	LOAD_SCREEN,
-	LOAD_PLAYLISTS,
+	GET_PLAYLISTS,
+	DISPLAY_PLAYLISTS,
 	SET_OPEN_PLAYLIST,
+	SET_PLAYING_PLAYLIST,
 	SET_MODAL,
 	SET_SEARCH_TEXT,
-	SET_SORT_TYPE,
-	SET_PLAYING_PLAYLIST
+	SET_SORT_TYPE
 };
 
 export const enum CurrentScreen {
@@ -59,6 +60,7 @@ type StoreState = {
 	currentScreen: CurrentScreen;
 	currentModal: CurrentModal;
 	playlists: IPlaylistExport[];
+	displayedPlaylists: IPlaylistExport[];
 	openPlaylist: IPlaylistExport | null;
 	playing: { playlist: IPlaylistExport, index: number } | null;
 	searchText: string;
@@ -69,6 +71,7 @@ const defaultStore: StoreState = {
 	currentScreen: CurrentScreen.NONE,
 	currentModal: { type: ModalType.NONE },
 	playlists: [],
+	displayedPlaylists: [],
 	openPlaylist: null,
 	playing: null,
 	searchText: '',
@@ -77,7 +80,8 @@ const defaultStore: StoreState = {
 
 type StoreAction =
 	| { type: StoreActionType.LOAD_SCREEN, payload: { currentScreen: CurrentScreen }}
-	| { type: StoreActionType.LOAD_PLAYLISTS, payload: { playlists: IPlaylistExport[] }}
+	| { type: StoreActionType.GET_PLAYLISTS, payload: { playlists: IPlaylistExport[] }}
+	| { type: StoreActionType.DISPLAY_PLAYLISTS, payload: { displayedPlaylists: IPlaylistExport[] }}
 	| { type: StoreActionType.SET_OPEN_PLAYLIST, payload: { playlist: IPlaylistExport | null }}
 	| { type: StoreActionType.SET_MODAL, payload: { modal: CurrentModal }}
 	| { type: StoreActionType.SET_SEARCH_TEXT, payload: { searchText: string }}
@@ -133,10 +137,25 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 					currentScreen: payload.currentScreen
 				};
 			}
-			case StoreActionType.LOAD_PLAYLISTS: {
+			case StoreActionType.GET_PLAYLISTS: {
+				let openPlaylist = null;
+				if (store.openPlaylist !== null) {
+					for (const p of payload.playlists) {
+						if (p._id === store.openPlaylist._id) {
+							openPlaylist = p;
+						}
+					}
+				}
 				return {
 					...store,
+					openPlaylist: openPlaylist,
 					playlists: payload.playlists
+				};
+			}
+			case StoreActionType.DISPLAY_PLAYLISTS: {
+				return {
+					...store,
+					displayedPlaylists: payload.displayedPlaylists,
 				};
 			}
 			case StoreActionType.SET_OPEN_PLAYLIST: {
@@ -144,6 +163,12 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 					...store,
 					openPlaylist: payload.playlist
 				};
+			}
+			case StoreActionType.SET_PLAYING_PLAYLIST: {
+				return {
+					...store,
+					playing: payload
+				}
 			}
 			case StoreActionType.SET_MODAL: {
 				return {
@@ -158,18 +183,11 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 				};
 			}
 			case StoreActionType.SET_SORT_TYPE: {
-				// ...
 				sortPlaylists(store.playlists, payload.sortType);
 				return {
 					...store,
 					sortType: payload.sortType
 				};
-			}
-			case StoreActionType.SET_PLAYING_PLAYLIST: {
-				return {
-					...store,
-					playing: payload
-				}
 			}
 			default: return store;
 		}
@@ -184,44 +202,54 @@ export const StoreContextProvider = ({ children }: { children: React.ReactNode }
 
 export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<StoreAction>) => ({
 	unloadPlaylists: function() {
-		storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: { playlists: []}});
+		storeDispatch({ type: StoreActionType.GET_PLAYLISTS, payload: { playlists: [] }});
+		storeDispatch({ type: StoreActionType.DISPLAY_PLAYLISTS, payload: { displayedPlaylists: [] }})
 	},
-	getUserPlaylists: async function()  {
+	getPlaylists: async function() {
 		try {
-			const response = await api.getUserPlaylists();
-			if (response.status === 200) {
-				sortPlaylists(response.data.playlists, store.sortType);
-				storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: {
-					playlists: response.data.playlists
-				}});
+			let response;
+			if (store.currentScreen === CurrentScreen.HOME) {
+				response = await api.getUserPlaylists();
 			}
-		}
-		catch (err) {
-			console.log('Error encountered in getUserPlaylists.');
-		}
-	},
-	getPublishedPlaylists: async function(text: string) {
-		try {
-			const response = await api.getPublishedPlaylists();
-			if (response.status === 200) {
-				let playlists: IPlaylistExport[] = response.data.playlists;
-				if (text === '') {
-					playlists = [];
-				}
+			else {
+				response = await api.getPublishedPlaylists();
+			}
+			let playlists: IPlaylistExport[] = response.data.playlists;
+			storeDispatch({ type: StoreActionType.GET_PLAYLISTS, payload: {
+				playlists: playlists
+			}});
+			if (store.searchText !== '') {
+				const lowerText = store.searchText.toLowerCase();
 				if (store.currentScreen === CurrentScreen.ALL_LISTS) {
-					playlists = playlists.filter(p => p.name.includes(text));
+					playlists = playlists.filter(p => p.name.toLowerCase().includes(lowerText));
 				}
 				else if (store.currentScreen === CurrentScreen.USER_LISTS) {
-					playlists = playlists.filter(p => p.ownerUsername.includes(text));
+					playlists = playlists.filter(p => p.ownerUsername.toLowerCase().includes(lowerText));
 				}
 				sortPlaylists(playlists, store.sortType);
-				storeDispatch({ type: StoreActionType.LOAD_PLAYLISTS, payload: {
-					playlists: playlists
+				storeDispatch({ type: StoreActionType.DISPLAY_PLAYLISTS, payload: {
+					displayedPlaylists: playlists
 				}});
 			}
 		}
 		catch (err) {
-			console.log('Error encountered in getPublishedPlaylists');
+			console.log('Error encountered in getPlaylists.');
+		}
+	},
+	displayPlaylists: function() {
+		let playlists = store.playlists;
+		if (store.searchText !== '') {
+			const lowerText = store.searchText.toLowerCase();
+			if (store.currentScreen === CurrentScreen.ALL_LISTS) {
+				playlists = playlists.filter(p => p.name.toLowerCase().includes(lowerText));
+			}
+			else if (store.currentScreen === CurrentScreen.USER_LISTS) {
+				playlists = playlists.filter(p => p.ownerUsername.toLowerCase().includes(lowerText));
+			}
+			sortPlaylists(playlists, store.sortType);
+			storeDispatch({ type: StoreActionType.DISPLAY_PLAYLISTS, payload: {
+				displayedPlaylists: playlists
+			}});
 		}
 	},
 	setOpenPlaylist: function(playlist: IPlaylistExport | null) {
@@ -233,7 +261,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	createPlaylist: async function() {
 		try {
 			const response = await api.createPlaylist();
-			this.getUserPlaylists();
+			this.getPlaylists();
 		}
 		catch (err) {
 			console.log(err);
@@ -242,12 +270,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	duplicatePlaylist: async function(playlist: IPlaylistExport) {
 		try {
 			const response = await api.duplicatePlaylist(playlist._id);
-			if (store.currentScreen === CurrentScreen.HOME) {
-				this.getUserPlaylists();
-			}
-			else {
-				this.getPublishedPlaylists(store.searchText);
-			}
+			this.getPlaylists();
 		}
 		catch (err) {
 			console.log(err);
@@ -256,8 +279,8 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	editPlaylistName: async function(playlist: IPlaylistExport, newName: string) {
 		try {
 			playlist.name = newName;
-			const response = await api.updatePlaylistNameById(playlist);
-			this.getUserPlaylists();
+			const response = await api.updatePlaylistById(playlist);
+			this.getPlaylists();
 			return true;
 		}
 		catch (err: any) {
@@ -269,6 +292,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 					}}
 				}
 			});
+			this.getPlaylists();
 			console.log(err);
 			return false;
 		}
@@ -277,11 +301,11 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		try {
 			if (store.openPlaylist !== null) {
 				const response = await api.updatePlaylistById(store.openPlaylist);
-				this.getUserPlaylists();
+				this.getPlaylists();
 			}
 		}
 		catch (err) {
-			console.log(err);
+			console.log('Error encountered in updateCurrentPlaylist.');
 		}
 	},
 	showPublishPlaylistModal: function(playlist: IPlaylistExport) {
@@ -296,11 +320,11 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		try {
 			if (store.currentModal.type === ModalType.PUBLISH_PLAYLIST) {
 				const response = await api.publishPlaylistById(store.currentModal.fields.playlistId);
-				this.getUserPlaylists();
+				this.getPlaylists();
 			}
 		}
 		catch (err) {
-			console.log(err);
+			console.log('Error encountered in publishPlaylist.');
 		}
 	},
 	showDeletePlaylistModal: function(playlist: IPlaylistExport) {
@@ -315,12 +339,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 		if (store.currentModal.type === ModalType.DELETE_PLAYLIST) {
 			await api.deletePlaylistById(store.currentModal.fields.playlistId);
 			this.closeModal();
-			if (store.currentScreen === CurrentScreen.HOME) {
-				this.getUserPlaylists();
-			}
-			else {
-				this.getPublishedPlaylists(store.searchText);
-			}
+			this.getPlaylists();
 		}
 		else {
 			console.log('Error: tried to delete playlist without open modal.');
@@ -328,21 +347,12 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	},
 	likePlaylist: async function(playlist: IPlaylistExport) {
 		await api.setPlaylistLike(playlist._id, !playlist.liked);
-		if (store.currentScreen === CurrentScreen.HOME) {
-			this.getUserPlaylists();
-		}
-		else {
-			this.getPublishedPlaylists(store.searchText);
-		}
+		this.getPlaylists();
 	},
 	dislikePlaylist: async function(playlist: IPlaylistExport) {
 		await api.setPlaylistDislike(playlist._id, !playlist.disliked);
-		if (store.currentScreen === CurrentScreen.HOME) {
-			this.getUserPlaylists();
-		}
-		else {
-			this.getPublishedPlaylists(store.searchText);
-		}	},
+		this.getPlaylists();
+	},
 	closeModal: function() {
 		storeDispatch({ type: StoreActionType.SET_MODAL, payload: {
 			modal: { type: ModalType.NONE }} }
@@ -464,13 +474,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 			try {
 				const response = await api.commentPlaylist(store.openPlaylist._id, text);
 				if (response.status === 200) {
-					if (store.currentScreen === CurrentScreen.HOME) {
-						this.getUserPlaylists();
-					}
-					else if (store.currentScreen === CurrentScreen.ALL_LISTS ||
-						store.currentScreen === CurrentScreen.USER_LISTS) {
-							this.getPublishedPlaylists(store.searchText);
-					}
+					this.getPlaylists();
 				}
 				// openPlaylist needs to be updated...
 				// this is the only place where its used like this
@@ -486,12 +490,7 @@ export const StoreAPICreator = (store: StoreState, storeDispatch: Dispatch<Store
 	loadPlaylist: async function(playlist: IPlaylistExport) {
 		playlist.listens++;
 		const response = await api.updatePlaylistListens(playlist);
-		if (store.currentScreen === CurrentScreen.HOME) {
-				this.getUserPlaylists();
-			}
-			else {
-				this.getPublishedPlaylists(store.searchText);
-			}
+		this.getPlaylists();
 		storeDispatch({ type: StoreActionType.SET_PLAYING_PLAYLIST, payload: {
 			playlist: playlist,
 			index: -1

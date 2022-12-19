@@ -16,11 +16,6 @@ export const updatePlaylistById = (playlist: IPlaylistExport) => {
 		playlist: playlist
 	});
 };
-export const updatePlaylistNameById = (playlist: IPlaylistExport) => {
-	return api.put(`/playlist/name/${playlist._id}`, {
-		playlist: playlist
-	});
-};
 export const updatePlaylistListens = (playlist: IPlaylistExport) => {
 	return api.put(`/playlist/listens/${playlist._id}`, {
 		playlist: playlist
@@ -44,7 +39,6 @@ const apis = {
 	setPlaylistDislike,
 	commentPlaylist,
 	updatePlaylistById,
-	updatePlaylistNameById,
 	updatePlaylistListens
 }
 

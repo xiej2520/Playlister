@@ -57,7 +57,7 @@ export default function SearchBar() {
 	function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.code === 'Enter') {
 			storeDispatch({ type: StoreActionType.SET_SEARCH_TEXT, payload: { searchText: text }});
-			StoreAPI.getPublishedPlaylists(text);
+			StoreAPI.getPlaylists();
 		}
 	}
 	function handleUpdateText(event: React.ChangeEvent<HTMLInputElement>) {

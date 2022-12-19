@@ -14,14 +14,12 @@ function HomeScreen() {
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 	useEffect(() => {
 		if (store.currentScreen === CurrentScreen.HOME) {
-			StoreAPI.getUserPlaylists();
+			StoreAPI.getPlaylists();
 		}
 		else if (store.currentScreen === CurrentScreen.ALL_LISTS) {
-			
 			StoreAPI.unloadPlaylists();
 		}
 		else if (store.currentScreen === CurrentScreen.USER_LISTS) {
-			
 			StoreAPI.unloadPlaylists();
 		}
 		else {

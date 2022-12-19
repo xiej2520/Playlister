@@ -219,11 +219,6 @@ const getPublishedPlaylists = async (req: IGetPlaylistsRequest, res: Response) =
 		.find({ publishDate: { $ne: null } })
 		.exec()
 		.then((playlists: IPlaylist[]) => {
-			if (!playlists.length) {
-				return res
-					.status(404)
-					.json({ error: 'Playlists not found.' });
-			}
 			return res.status(200).json({ playlists: playlists.map(
 				(playlist) => exportPlaylist(req.userId, playlist))
 			});
@@ -284,14 +279,15 @@ const updatePlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 			if (playlist.publishDate !== null) {
 				return res.status(400).json({ errorMessage: 'Playlist cannot be edited!' });
 			}
-			Playlist
-				.findOne({ ownerId: req.userId, name: req.body.playlist.name })
+			let updatedPlaylist = req.body.playlist;
+			if (updatedPlaylist.name !== playlist.name) {
+				Playlist
+				.findOne({ ownerId: req.userId, name: updatedPlaylist.name })
 				.then((foundPlaylist: IPlaylist | null) => {
 					if (foundPlaylist !== null) {
-						return res.status(401).json({ errorMessage: 'A playlist with the same name already exists!'})
+						return res.status(401).json({ errorMessage: 'A playlist with the same name already exists!'});
 					}
 					else {
-						let updatedPlaylist = req.body.playlist;
 						playlist.name = updatedPlaylist.name;
 						playlist.songs = updatedPlaylist.songs;
 						playlist
@@ -301,11 +297,12 @@ const updatePlaylist = async(req: IUpdatePlaylistRequest, res: Response) => {
 							});
 					}
 				});
+			}
 		})
 		.catch((error: CallbackError) => {
 			console.log(error);
 			return res.status(400).json({ body: 'Playlist not edited!' });
-		})
+		});
 }
 
 const updatePlaylistListens = async(req: IUpdatePlaylistRequest, res: Response) => {
@@ -354,32 +351,43 @@ const likePlaylist = async(req: ILikePlaylistRequest, res: Response) => {
 			if (playlist.publishDate === null) {
 				return res.status(400).json({ errorMessage: 'Playlist cannot be liked!' });
 			}
-			if (req.body.like === true) {
-				if (!playlist.likes.has(req.userId)) {
-					if (playlist.dislikes.has(req.userId)) {
-						playlist.dislikes.delete(req.userId);
-						playlist.dislikeCount--;
+			User
+				.findById(req.userId)
+				.then((user: IUser | null) => {
+					if (user === null) {
+						return res.status(400).json({ errorMessage: 'User making request not found!' });
 					}
-					playlist.likes.set(req.userId, true);
-					playlist.likeCount++;
-				}
-			}
-			else {
-				if (playlist.likes.has(req.userId)) {
-					playlist.likes.delete(req.userId);
-					playlist.likeCount--;
-				}
-			}
-			playlist
-				.save()
-				.then(() => {
-					return res.status(200).json({ body: 'Playlist sucessfully liked!' });
-				});
-		})
+					if (req.body.like === true) {
+						if (!playlist.likes.has(req.userId)) {
+							if (playlist.dislikes.has(req.userId)) {
+								user.dislikes.delete(playlist.id);
+								playlist.dislikes.delete(req.userId);
+								playlist.dislikeCount--;
+							}
+							user.likes.set(playlist.id, true);
+							playlist.likes.set(req.userId, true);
+							playlist.likeCount++;
+						}
+					}
+					else {
+						if (playlist.likes.has(req.userId)) {
+							user.likes.delete(playlist.id);
+							playlist.likes.delete(req.userId);
+							playlist.likeCount--;
+						}
+					}
+					user.save();
+					playlist
+						.save()
+						.then(() => {
+							return res.status(200).json({ body: 'Playlist sucessfully liked!' });
+						});
+				})
+			})
 		.catch((error: CallbackError) => {
 			console.log(error);
 			return res.status(400).json({ body: 'Playlist not liked!' });
-		})
+		});
 }
 
 const dislikePlaylist = async(req: IDislikePlaylistRequest, res: Response) => {
@@ -400,32 +408,43 @@ const dislikePlaylist = async(req: IDislikePlaylistRequest, res: Response) => {
 			if (playlist.publishDate === null) {
 				return res.status(400).json({ errorMessage: 'Playlist cannot be disliked!' });
 			}
-			if (req.body.dislike === true) {
-				if (!playlist.dislikes.has(req.userId)) {
-					if (playlist.likes.has(req.userId)) {
-						playlist.likes.delete(req.userId);
-						playlist.likeCount--;
+			User
+				.findById(req.userId)
+				.then((user: IUser | null) => {
+					if (user === null) {
+						return res.status(400).json({ errorMessage: 'User making request not found!' });
 					}
-					playlist.dislikes.set(req.userId, true);
-					playlist.dislikeCount++;
-				}
-			}
-			else {
-				if (playlist.dislikes.has(req.userId)) {
-					playlist.dislikes.delete(req.userId);
-					playlist.dislikeCount--;
-				}
-			}
-			playlist
-				.save()
-				.then(() => {
-					return res.status(200).json({ body: 'Playlist sucessfully disliked!' });
-				});
-		})
+					if (req.body.dislike === true) {
+						if (!playlist.dislikes.has(req.userId)) {
+							if (playlist.likes.has(req.userId)) {
+								user.likes.delete(playlist.id);
+								playlist.likes.delete(req.userId);
+								playlist.likeCount--;
+							}
+							user.dislikes.set(playlist.id, true);
+							playlist.dislikes.set(req.userId, true);
+							playlist.dislikeCount++;
+						}
+					}
+					else {
+						if (playlist.dislikes.has(req.userId)) {
+							user.dislikes.delete(playlist.id);
+							playlist.dislikes.delete(req.userId);
+							playlist.dislikeCount--;
+						}
+					}
+					user.save();
+					playlist
+						.save()
+						.then(() => {
+							return res.status(200).json({ body: 'Playlist sucessfully disliked!' });
+						});
+				})
+			})
 		.catch((error: CallbackError) => {
 			console.log(error);
 			return res.status(400).json({ body: 'Playlist not disliked!' });
-		})
+		});
 }
 
 const commentPlaylist = async(req: ICommentPlaylistRequest, res: Response) => {
