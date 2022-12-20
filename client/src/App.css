@@ -40,6 +40,10 @@
 	color: #61dafb;
 }
 
+a {
+	color: var(--swatch-accent);
+}
+
 .modal {
 	background: var(--swatch-foundation);
 	border-radius: 4px;

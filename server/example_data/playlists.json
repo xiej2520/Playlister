@@ -1,0 +1,659 @@
+[{
+  "_id": {
+    "$oid": "639ff3d19fd60aeabb6f6c08"
+  },
+  "name": "ABCD",
+  "ownerUsername": "AB",
+  "ownerId": "639fcf1bb8385850fcdf75ee",
+  "songs": [
+    {
+      "title": "Fur Elise",
+      "artist": "Beethoven",
+      "youTubeId": "_mVW8tgGY_w",
+      "_id": {
+        "$oid": "63a0e95e7882ec8266a06535"
+      }
+    },
+    {
+      "title": "Sugar",
+      "artist": "Maroon 5",
+      "youTubeId": "09R8_2nJtjg",
+      "_id": {
+        "$oid": "63a0ecbd7882ec8266a06796"
+      }
+    },
+    {
+      "title": "Fate/stay night",
+      "artist": "Unknown",
+      "youTubeId": "1aOSMxeYQPY",
+      "_id": {
+        "$oid": "63a0eb107882ec8266a065c6"
+      }
+    },
+    {
+      "title": "She's Not Gone Yet But She's Leaving",
+      "artist": "The Fratellis",
+      "youTubeId": "1uNjO_U9ps4",
+      "_id": {
+        "$oid": "63a0eb277882ec8266a065dc"
+      }
+    },
+    {
+      "title": "he 10 hours",
+      "artist": "10HoursMovies",
+      "youTubeId": "3SCBYUE_X1U",
+      "_id": {
+        "$oid": "63a0ebfc7882ec8266a0662a"
+      }
+    },
+    {
+      "title": "Past lives",
+      "artist": "moodbluemusic_",
+      "youTubeId": "4_TdJgjh5vQ",
+      "_id": {
+        "$oid": "63a0ec107882ec8266a06640"
+      }
+    }
+  ],
+  "publishDate": null,
+  "listens": 29,
+  "likeCount": 0,
+  "likes": {},
+  "dislikeCount": 0,
+  "dislikes": {},
+  "comments": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1671427025831"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1671500037816"
+    }
+  },
+  "__v": 43
+},{
+  "_id": {
+    "$oid": "63a111897882ec8266a06acb"
+  },
+  "name": "ABCD 1",
+  "ownerUsername": "AB",
+  "ownerId": "639fcf1bb8385850fcdf75ee",
+  "songs": [
+    {
+      "title": "Fur Elise",
+      "artist": "Beethoven",
+      "youTubeId": "_mVW8tgGY_w",
+      "_id": {
+        "$oid": "63a0e95e7882ec8266a06535"
+      }
+    },
+    {
+      "title": "Sugar",
+      "artist": "Maroon 5",
+      "youTubeId": "09R8_2nJtjg",
+      "_id": {
+        "$oid": "63a0ecbd7882ec8266a06796"
+      }
+    },
+    {
+      "title": "Fate/stay night",
+      "artist": "Unknown",
+      "youTubeId": "1aOSMxeYQPY",
+      "_id": {
+        "$oid": "63a0eb107882ec8266a065c6"
+      }
+    },
+    {
+      "title": "She's Not Gone Yet But She's Leaving",
+      "artist": "The Fratellis",
+      "youTubeId": "1uNjO_U9ps4",
+      "_id": {
+        "$oid": "63a0eb277882ec8266a065dc"
+      }
+    },
+    {
+      "title": "he 10 hours",
+      "artist": "10HoursMovies",
+      "youTubeId": "3SCBYUE_X1U",
+      "_id": {
+        "$oid": "63a0ebfc7882ec8266a0662a"
+      }
+    },
+    {
+      "title": "Past lives",
+      "artist": "moodbluemusic_",
+      "youTubeId": "4_TdJgjh5vQ",
+      "_id": {
+        "$oid": "63a0ec107882ec8266a06640"
+      }
+    }
+  ],
+  "publishDate": {
+    "$date": {
+      "$numberLong": "1671413773125"
+    }
+  },
+  "listens": 2,
+  "likeCount": 1,
+  "likes": {
+    "63a114b47882ec8266a07463": "true"
+  },
+  "dislikeCount": 1,
+  "dislikes": {
+    "639fcf1bb8385850fcdf75ee": "true"
+  },
+  "comments": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1671500169777"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1671501108882"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63a113b97882ec8266a06d8c"
+  },
+  "name": "LLA",
+  "ownerUsername": "AB",
+  "ownerId": "639fcf1bb8385850fcdf75ee",
+  "songs": [
+    {
+      "title": "Vegeta - Super Saiyan",
+      "artist": "Falkkone",
+      "youTubeId": "5yakBpvS9pY",
+      "_id": {
+        "$oid": "63a113d37882ec8266a06de3"
+      }
+    },
+    {
+      "title": "prom dress",
+      "artist": "mxmtoon",
+      "youTubeId": "AeUeLzBO0go",
+      "_id": {
+        "$oid": "63a113e07882ec8266a06e20"
+      }
+    },
+    {
+      "title": "Coffins",
+      "artist": "Bohnes",
+      "youTubeId": "cAeC2vlHWqA",
+      "_id": {
+        "$oid": "63a113ed7882ec8266a06e66"
+      }
+    },
+    {
+      "title": "Chippin' in",
+      "artist": "Cyberpunk 2077 Soundtrack",
+      "youTubeId": "CYRyaDPXwQE",
+      "_id": {
+        "$oid": "63a1140b7882ec8266a06f0c"
+      }
+    },
+    {
+      "title": "Uncharted",
+      "artist": "BenniB",
+      "youTubeId": "dp23xUkfrPE",
+      "_id": {
+        "$oid": "63a114127882ec8266a06f2b"
+      }
+    },
+    {
+      "title": "Darci",
+      "artist": "Wild Horse",
+      "youTubeId": "e0_V8IoYSLU",
+      "_id": {
+        "$oid": "63a114277882ec8266a06fad"
+      }
+    },
+    {
+      "title": "I'm just your problem",
+      "artist": "Unknown",
+      "youTubeId": "h28xpNvW9Yw",
+      "_id": {
+        "$oid": "63a114557882ec8266a070cb"
+      }
+    },
+    {
+      "title": "My Heart",
+      "artist": "Unknown",
+      "youTubeId": "jK2aIUmmdP4",
+      "_id": {
+        "$oid": "63a1145f7882ec8266a0713e"
+      }
+    },
+    {
+      "title": "All of Us",
+      "artist": "Memphis",
+      "youTubeId": "lWMCP4advDE",
+      "_id": {
+        "$oid": "63a1147d7882ec8266a0720e"
+      }
+    },
+    {
+      "title": "Waltz No. 2",
+      "artist": "Dmitri Shostakovich",
+      "youTubeId": "mmCnQDUSO4I",
+      "_id": {
+        "$oid": "63a114977882ec8266a072ed"
+      }
+    }
+  ],
+  "publishDate": null,
+  "listens": 1,
+  "likeCount": 0,
+  "likes": {},
+  "dislikeCount": 0,
+  "dislikes": {},
+  "comments": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1671327929278"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1671500951741"
+    }
+  },
+  "__v": 41
+},{
+  "_id": {
+    "$oid": "63a114987882ec8266a07313"
+  },
+  "name": "LLA 1",
+  "ownerUsername": "AB",
+  "ownerId": "639fcf1bb8385850fcdf75ee",
+  "songs": [
+    {
+      "title": "Vegeta - Super Saiyan",
+      "artist": "Falkkone",
+      "youTubeId": "5yakBpvS9pY",
+      "_id": {
+        "$oid": "63a113d37882ec8266a06de3"
+      }
+    },
+    {
+      "title": "prom dress",
+      "artist": "mxmtoon",
+      "youTubeId": "AeUeLzBO0go",
+      "_id": {
+        "$oid": "63a113e07882ec8266a06e20"
+      }
+    },
+    {
+      "title": "Coffins",
+      "artist": "Bohnes",
+      "youTubeId": "cAeC2vlHWqA",
+      "_id": {
+        "$oid": "63a113ed7882ec8266a06e66"
+      }
+    },
+    {
+      "title": "Chippin' in",
+      "artist": "Cyberpunk 2077 Soundtrack",
+      "youTubeId": "CYRyaDPXwQE",
+      "_id": {
+        "$oid": "63a1140b7882ec8266a06f0c"
+      }
+    },
+    {
+      "title": "Uncharted",
+      "artist": "BenniB",
+      "youTubeId": "dp23xUkfrPE",
+      "_id": {
+        "$oid": "63a114127882ec8266a06f2b"
+      }
+    },
+    {
+      "title": "Darci",
+      "artist": "Wild Horse",
+      "youTubeId": "e0_V8IoYSLU",
+      "_id": {
+        "$oid": "63a114277882ec8266a06fad"
+      }
+    },
+    {
+      "title": "I'm just your problem",
+      "artist": "Unknown",
+      "youTubeId": "h28xpNvW9Yw",
+      "_id": {
+        "$oid": "63a114557882ec8266a070cb"
+      }
+    },
+    {
+      "title": "My Heart",
+      "artist": "Unknown",
+      "youTubeId": "jK2aIUmmdP4",
+      "_id": {
+        "$oid": "63a1145f7882ec8266a0713e"
+      }
+    },
+    {
+      "title": "All of Us",
+      "artist": "Memphis",
+      "youTubeId": "lWMCP4advDE",
+      "_id": {
+        "$oid": "63a1147d7882ec8266a0720e"
+      }
+    },
+    {
+      "title": "Waltz No. 2",
+      "artist": "Dmitri Shostakovich",
+      "youTubeId": "mmCnQDUSO4I",
+      "_id": {
+        "$oid": "63a114977882ec8266a072ed"
+      }
+    }
+  ],
+  "publishDate": {
+    "$date": {
+      "$numberLong": "1671500956139"
+    }
+  },
+  "listens": 1,
+  "likeCount": 2,
+  "likes": {
+    "639fcf1bb8385850fcdf75ee": "true",
+    "63a114b47882ec8266a07463": "true"
+  },
+  "dislikeCount": 0,
+  "dislikes": {},
+  "comments": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1671241752827"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1671501106930"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63a114b97882ec8266a0746a"
+  },
+  "name": "Playlist No. 0",
+  "ownerUsername": "cd",
+  "ownerId": "63a114b47882ec8266a07463",
+  "songs": [
+    {
+      "title": "Tyler Herro",
+      "artist": "Jack Harlow",
+      "youTubeId": "np9Ub1LilKU",
+      "_id": {
+        "$oid": "63a114dc7882ec8266a07491"
+      }
+    },
+    {
+      "title": "Listerine",
+      "artist": "Dayglo",
+      "youTubeId": "ntn6q-ODULo",
+      "_id": {
+        "$oid": "63a114e77882ec8266a074aa"
+      }
+    },
+    {
+      "title": "Lights",
+      "artist": "BTS",
+      "youTubeId": "omzxE07hbwk",
+      "_id": {
+        "$oid": "63a114fc7882ec8266a074d8"
+      }
+    },
+    {
+      "title": "My Fear",
+      "artist": "Siames",
+      "youTubeId": "PNgcL_MbiW0",
+      "_id": {
+        "$oid": "63a1150d7882ec8266a07512"
+      }
+    },
+    {
+      "title": "Sunflower",
+      "artist": "Unknown",
+      "youTubeId": "r7Rn4ryE_w8",
+      "_id": {
+        "$oid": "63a115157882ec8266a07546"
+      }
+    },
+    {
+      "title": "Hopes and Dreams",
+      "artist": "Undertale OST",
+      "youTubeId": "tz82xbLvK_k",
+      "_id": {
+        "$oid": "63a115207882ec8266a07583"
+      }
+    },
+    {
+      "title": "And So It Begins",
+      "artist": "Unknown",
+      "youTubeId": "Vk8QSqPC5TA",
+      "_id": {
+        "$oid": "63a1152b7882ec8266a075c9"
+      }
+    }
+  ],
+  "publishDate": null,
+  "listens": 1,
+  "likeCount": 0,
+  "likes": {},
+  "dislikeCount": 0,
+  "dislikes": {},
+  "comments": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1671500985309"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1671501099985"
+    }
+  },
+  "__v": 25
+},{
+  "_id": {
+    "$oid": "63a1152e7882ec8266a075dd"
+  },
+  "name": "Playlist No. 0 1",
+  "ownerUsername": "cd",
+  "ownerId": "63a114b47882ec8266a07463",
+  "songs": [
+    {
+      "title": "Tyler Herro",
+      "artist": "Jack Harlow",
+      "youTubeId": "np9Ub1LilKU",
+      "_id": {
+        "$oid": "63a114dc7882ec8266a07491"
+      }
+    },
+    {
+      "title": "Listerine",
+      "artist": "Dayglo",
+      "youTubeId": "ntn6q-ODULo",
+      "_id": {
+        "$oid": "63a114e77882ec8266a074aa"
+      }
+    },
+    {
+      "title": "Lights",
+      "artist": "BTS",
+      "youTubeId": "omzxE07hbwk",
+      "_id": {
+        "$oid": "63a114fc7882ec8266a074d8"
+      }
+    },
+    {
+      "title": "My Fear",
+      "artist": "Siames",
+      "youTubeId": "PNgcL_MbiW0",
+      "_id": {
+        "$oid": "63a1150d7882ec8266a07512"
+      }
+    },
+    {
+      "title": "Sunflower",
+      "artist": "Unknown",
+      "youTubeId": "r7Rn4ryE_w8",
+      "_id": {
+        "$oid": "63a115157882ec8266a07546"
+      }
+    },
+    {
+      "title": "Hopes and Dreams",
+      "artist": "Undertale OST",
+      "youTubeId": "tz82xbLvK_k",
+      "_id": {
+        "$oid": "63a115207882ec8266a07583"
+      }
+    },
+    {
+      "title": "And So It Begins",
+      "artist": "Unknown",
+      "youTubeId": "Vk8QSqPC5TA",
+      "_id": {
+        "$oid": "63a1152b7882ec8266a075c9"
+      }
+    }
+  ],
+  "publishDate": {
+    "$date": {
+      "$numberLong": "1671501104611"
+    }
+  },
+  "listens": 0,
+  "likeCount": 1,
+  "likes": {
+    "63a114b47882ec8266a07463": "true"
+  },
+  "dislikeCount": 0,
+  "dislikes": {},
+  "comments": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1671155502537"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1671501107561"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63a115377882ec8266a076c0"
+  },
+  "name": "LLA 1 1",
+  "ownerUsername": "cd",
+  "ownerId": "63a114b47882ec8266a07463",
+  "songs": [
+    {
+      "title": "Vegeta - Super Saiyan",
+      "artist": "Falkkone",
+      "youTubeId": "5yakBpvS9pY",
+      "_id": {
+        "$oid": "63a113d37882ec8266a06de3"
+      }
+    },
+    {
+      "title": "prom dress",
+      "artist": "mxmtoon",
+      "youTubeId": "AeUeLzBO0go",
+      "_id": {
+        "$oid": "63a113e07882ec8266a06e20"
+      }
+    },
+    {
+      "title": "Coffins",
+      "artist": "Bohnes",
+      "youTubeId": "cAeC2vlHWqA",
+      "_id": {
+        "$oid": "63a113ed7882ec8266a06e66"
+      }
+    },
+    {
+      "title": "Chippin' in",
+      "artist": "Cyberpunk 2077 Soundtrack",
+      "youTubeId": "CYRyaDPXwQE",
+      "_id": {
+        "$oid": "63a1140b7882ec8266a06f0c"
+      }
+    },
+    {
+      "title": "Uncharted",
+      "artist": "BenniB",
+      "youTubeId": "dp23xUkfrPE",
+      "_id": {
+        "$oid": "63a114127882ec8266a06f2b"
+      }
+    },
+    {
+      "title": "Darci",
+      "artist": "Wild Horse",
+      "youTubeId": "e0_V8IoYSLU",
+      "_id": {
+        "$oid": "63a114277882ec8266a06fad"
+      }
+    },
+    {
+      "title": "I'm just your problem",
+      "artist": "Unknown",
+      "youTubeId": "h28xpNvW9Yw",
+      "_id": {
+        "$oid": "63a114557882ec8266a070cb"
+      }
+    },
+    {
+      "title": "My Heart",
+      "artist": "Unknown",
+      "youTubeId": "jK2aIUmmdP4",
+      "_id": {
+        "$oid": "63a1145f7882ec8266a0713e"
+      }
+    },
+    {
+      "title": "All of Us",
+      "artist": "Memphis",
+      "youTubeId": "lWMCP4advDE",
+      "_id": {
+        "$oid": "63a1147d7882ec8266a0720e"
+      }
+    },
+    {
+      "title": "Waltz No. 2",
+      "artist": "Dmitri Shostakovich",
+      "youTubeId": "mmCnQDUSO4I",
+      "_id": {
+        "$oid": "63a114977882ec8266a072ed"
+      }
+    }
+  ],
+  "publishDate": null,
+  "listens": 0,
+  "likeCount": 0,
+  "likes": {},
+  "dislikeCount": 0,
+  "dislikes": {},
+  "comments": [],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1671501111022"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1671501111022"
+    }
+  },
+  "__v": 0
+}]

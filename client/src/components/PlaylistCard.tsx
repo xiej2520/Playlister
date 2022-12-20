@@ -117,7 +117,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls="panel1bh-content"
 				id="panel1bh-header"
-				sx={{ bgcolor: playing ? '#512da8' :
+				sx={{ bgcolor: playing ? 'primary.dark' :
 					published ? 'grey.800' : 'grey.900', position: 'sticky', top: '0', zIndex: 100 }}
 			>
 				<Grid container>
@@ -171,6 +171,7 @@ function PlaylistCard(props: { playlist: IPlaylistExport }) {
 							key={index}
 							index={index}
 							song={song}
+							playing={playing && index === store.playing!.index}
 							published={published}
 						/>
 					))

@@ -57,7 +57,7 @@ export default function YouTubeWrapper() {
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
 
 	const theme = useTheme();
-	const [value, setValue] = React.useState(0);
+	const [value, setValue] = useState(0);
 	
 	useEffect(() => {
 		loadAndPlayCurrentSong(yplayer);
@@ -67,6 +67,7 @@ export default function YouTubeWrapper() {
 		setValue(newValue);
 	};
 
+	const [playerStatus, setPlayerStatus] = useState(-1);
 	const [yplayer, setYplayer] = useState<any>(null);
 
 	function loadAndPlayCurrentSong(player: any) {
@@ -108,26 +109,27 @@ export default function YouTubeWrapper() {
 		}
 	}
 	function onPlayerStateChange(event: any) {
-		let playerStatus = event.data;
+		const ps = event.data;
+		setPlayerStatus(ps);
 		let player = event.target;
-		if (playerStatus === -1) {
+		if (ps === -1) {
 			// video not started
 		}
-		else if (playerStatus === 0) {
+		else if (ps === 0) {
 			// video done playing
 			incSong();
 			loadAndPlayCurrentSong(player);
 		}
-		else if (playerStatus === 1) {
+		else if (ps === 1) {
 			// video played
 		}
-		else if (playerStatus === 2) {
+		else if (ps === 2) {
 			// video paused
 		}
-		else if (playerStatus === 3) {
+		else if (ps === 3) {
 			// video buffering
 		}
-		else if (playerStatus === 5) {
+		else if (ps === 5) {
 			// video cued
 		}
 	}
@@ -143,6 +145,7 @@ export default function YouTubeWrapper() {
 	}
 	function handleStop() {
 		yplayer.stopVideo();
+		storeDispatch({ type: StoreActionType.SET_PLAYING_PLAYLIST, payload: null });
 	}
 	function handleForward() {
 		incSong();
@@ -158,13 +161,13 @@ export default function YouTubeWrapper() {
 	};
 
 	const currentPlaylistName = store.playing !== null ? store.playing.playlist.name : "";
-	let currentSong = store.playing !== null && store.playing.playlist.songs.length > 0 ?
+	const currentSong = store.playing !== null && store.playing.playlist.songs.length > 0 ?
 		store.playing.playlist.songs[store.playing.index] : {
 			title: "",
 			artist: "",
 			youTubeId: ""
 		};
-	if (store.playing !== null && store.playing.index == -1) {
+	if (store.playing !== null && store.playing.index === -1) {
 		store.playing.index = 0;
 		loadAndPlayCurrentSong(yplayer);
 	}
@@ -174,7 +177,7 @@ export default function YouTubeWrapper() {
 		textAlign: 'right'
 	};
 	return (
-		<Box sx={{ transform: 'rotate(-2deg)' }}>
+		<Box sx={{ /*transform: 'rotate(-0.4deg)'*/ }}>
 			<AppBar position="static">
 				<Tabs
 					value={value}
@@ -197,7 +200,7 @@ export default function YouTubeWrapper() {
 				/>
 				{store.playing === null ? <></> :
 					<Grid container sx={{
-						bgcolor: '#512da8',
+						bgcolor: 'primary.dark',
 						padding: '10px'
 					}}>
 						<Grid item xs={12}
@@ -241,25 +244,29 @@ export default function YouTubeWrapper() {
 							<IconButton
 								onClick={handleRewind}
 							>
-								<FastRewind />
+								<FastRewind/>
 							</IconButton>
-							<IconButton
+							{
+								playerStatus !== 1 ?
+								<IconButton
 								onClick={handlePlay}
 							>
-								<PlayArrow />
-							</IconButton>
-							<IconButton
-								onClick={handlePause}
-							>
-								<Pause />
-							</IconButton>
-							{/*
+								<PlayArrow/>
+							</IconButton> : <></>
+							}
+							{
+								playerStatus === 1 ?
+								<IconButton
+									onClick={handlePause}
+								>
+									<Pause/>
+								</IconButton> : <></>
+							}
 							<IconButton
 								onClick={handleStop}
 							>
-								<Stop />
+								<Stop/>
 							</IconButton>
-							*/}
 							<IconButton
 								onClick={handleForward}
 							>

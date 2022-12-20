@@ -17,7 +17,12 @@ function HomeScreen() {
 	}, [store.currentScreen])
 
 	let playlistCards = (
-		<Box sx={{ height: '85vh', overflow: 'scroll', transform: 'rotate(2deg)' }}>
+		<Box sx={{
+			height: 'calc(100vh - 144px)', // appbar 64px statusbar 64px
+			overflow: 'auto',
+			//transform: 'rotate(0.5deg)'
+			}}
+		>
 			{store.displayedPlaylists.map((playlist) => (
 				<PlaylistCard
 					key={playlist._id}

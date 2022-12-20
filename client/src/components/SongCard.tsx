@@ -3,10 +3,10 @@ import { useContext, useState } from "react";
 import { StoreContext, StoreAPICreator } from "../store";
 import { ISong } from "../store/playlist-model";
 
-function SongCard(props: { song: ISong, index: number, published: boolean }) {
+function SongCard(props: { song: ISong, index: number, playing: boolean, published: boolean }) {
 	const { state: store, dispatch: storeDispatch } = useContext(StoreContext);
 	const StoreAPI = StoreAPICreator(store, storeDispatch);
-	const { song, index, published } = props;
+	const { song, index, playing, published } = props;
 	const [draggedTo, setDraggedTo] = useState(false);
 
 	function handleDragStart(event: React.DragEvent<HTMLElement>) {
@@ -38,17 +38,21 @@ function SongCard(props: { song: ISong, index: number, published: boolean }) {
 			StoreAPI.showEditSongModal(index, song);
 		}
 	}
+	const backgroundColor = draggedTo ? 'grey.900' : playing ? 'primary.dark' : 'background.paper';
 	return (
 		<Box
 			key={index}
 			id={'song-' + index + '-card'}
 			sx={{
 				alignItems: 'center',
-				bgcolor: draggedTo ? 'primary' : 'background.paper',
+				bgcolor: backgroundColor,
 				borderRadius: '4px',
 				display: 'flex',
 				margin: '4px',
-				padding: '8px'
+				padding: '8px',
+				"&:hover": {
+					bgcolor: 'grey.900',
+				}
 			}}
 			draggable={published ? 'false' : 'true'}
 			/*

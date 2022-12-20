@@ -28,7 +28,7 @@ function StatusBar() {
 	return (
 		<Box
 			sx={{
-				height: '80%', width: '80%', alignItems: 'center',
+				height: '64px', width: '80%', alignItems: 'center',
 				bgcolor: 'primary.main',
 				justifyContent: 'center', display: 'flex' 
 			}}
