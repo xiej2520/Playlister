@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  client:
+    image: playlister-client
+    build: ./client
+    ports:
+      - '3000:3000'
+  server:
+    image: playlister-server
+    build: ./server
+    ports:
+      - '4000:4000'
+    networks:
+      - mern-app
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:5.0
+    ports:
+      - '27017:27017'
+    networks:
+      - mern-app
+    volumes:
+      - 'mongo:/data/db'
+networks:
+  mern-app:
+volumes:
+  mongo:
