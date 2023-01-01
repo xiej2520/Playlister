@@ -22,6 +22,8 @@
 @media (prefers-reduced-motion: no-preference) {
 	.App-logo {
 		animation: App-logo-spin infinite 0.009s linear;
+		max-width: 200px;
+		min-width: 200px;
 	}
 }
 

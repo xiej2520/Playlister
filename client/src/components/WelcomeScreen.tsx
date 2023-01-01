@@ -20,7 +20,12 @@ export default function WelcomeScreen() {
 			container spacing={3}
 			direction='column'
 			alignItems='center'
-			sx={{ backgroundImage: 'linear-gradient(0deg, rgba(148,145,203,1) 0%, rgba(217,143,226,1) 32%, rgba(237,139,209,1) 66%, rgba(241,228,255,0) 100%)'}}
+			sx={{
+				backgroundImage: 'linear-gradient(0deg, rgba(148,145,203,1) 0%, rgba(217,143,226,1) 32%, rgba(237,139,209,1) 66%, rgba(241,228,255,0) 100%)',
+				margin: 0,
+				height: 'calc(100vh - 64px)', // appbar 64px statusbar 64px
+				width: "100%"
+			}}
 		>
 			<Grid item xs>
 				<Typography variant='h1'>Welcome to...</Typography>
